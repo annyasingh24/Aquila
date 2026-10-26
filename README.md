@@ -1,4 +1,3 @@
-# Aquila
 #!/usr/bin/env python3
 """
 AQUILA - physics-aware AI guardian for city water grids
@@ -34,7 +33,11 @@ import hashlib
 import heapq
 import json
 import math
+import os
 import sys
+import threading
+import urllib.request
+import uuid
 
 import numpy as np
 
@@ -687,6 +690,85 @@ class Aquila:
         self.trust[:] = 1.0
 
 
+
+# ============================ PHONE NOTIFICATIONS ===========================
+class Notifier:
+    """Push alerts to a phone as a pop-up via ntfy.sh (free, no account, no API key).
+
+    Phone setup (30 seconds): install the "ntfy" app (Android / iOS) -> Subscribe to topic ->
+    type the SAME topic name you set here. Anyone who knows the topic can read it, so pick
+    something unguessable. Self-hosted server? set base_url. Uses only the standard library.
+    """
+    STYLE = {   # kind -> (priority 1-5, emoji tags, headline)
+        "CONTAMINATION": (5, "biohazard,rotating_light", "CONTAMINATION detected"),
+        "REAL_LEAK":     (5, "droplet,rotating_light", "REAL LEAK confirmed"),
+        "CYBERATTACK":   (4, "lock,warning", "CYBERATTACK on sensor"),
+        "SENSOR_FAULT":  (3, "wrench", "Sensor fault"),
+        "MICRO_CRACK":   (2, "ear", "Hairline crack heard"),
+    }
+
+    def __init__(self, topic=None, base_url="https://ntfy.sh", enabled=False):
+        self.topic = topic or os.environ.get("AQUILA_NTFY_TOPIC") or f"aquila-{uuid.uuid4().hex[:10]}"
+        self.base_url, self.enabled = base_url.rstrip("/"), enabled
+        self.sent, self.outbox, self.last_error = set(), [], None
+        self.sync = False          # True = send inline (used by tests)
+
+    @staticmethod
+    def _ascii(s):                 # HTTP headers must be latin-1 safe
+        return s.encode("ascii", "ignore").decode()
+
+    def compose(self, inc):
+        prio, tags, head = self.STYLE.get(inc["kind"], (3, "bell", inc["kind"]))
+        info, node = inc["info"], inc["node"]
+        where = f"zone {list(node)}" if isinstance(node, tuple) else f"node {node}"
+        if inc["kind"] == "REAL_LEAK":
+            body = f"~{info.get('lps')} L/s at {where}, confirmed by inflow meter. Valves isolating; send crew."
+        elif inc["kind"] == "CONTAMINATION":
+            pz = info.get("patient_zero") or {}
+            body = (f"Plume at {where}. Source: node {pz.get('node')} (~{pz.get('age_min', 0):.0f} min ago). "
+                    "Quarantine valves queued; warn hospitals.")
+        elif inc["kind"] == "CYBERATTACK":
+            body = f"{where}: {info.get('vector')}. DO NOT dig - reset the IoT device."
+        elif inc["kind"] == "SENSOR_FAULT":
+            body = f"{where}: {info.get('vector')}. Ghost sensor in use; schedule inspection."
+        else:
+            body = f"{where}: {info}"
+        return dict(title=f"Aquila: {head} ({where})", body=body, priority=prio, tags=tags)
+
+    def dispatch(self, incidents, tick):
+        """Call every tick. Sends each NEW incident exactly once; returns the new messages."""
+        fresh = []
+        for key, inc in incidents.items():
+            if key in self.sent:
+                continue
+            self.sent.add(key)
+            msg = dict(self.compose(inc), tick=tick)
+            fresh.append(msg)
+            self.outbox.append(msg)
+            if self.enabled:
+                if self.sync:
+                    self._post(msg)
+                else:
+                    threading.Thread(target=self._post, args=(msg,), daemon=True).start()
+        return fresh
+
+    def _post(self, msg):
+        try:
+            req = urllib.request.Request(
+                f"{self.base_url}/{self.topic}", data=msg["body"].encode("utf-8"), method="POST",
+                headers={"Title": self._ascii(msg["title"]), "Priority": str(msg["priority"]),
+                         "Tags": msg["tags"]})
+            urllib.request.urlopen(req, timeout=8).read()
+            self.last_error = None
+        except Exception as e:          # never let a network blip crash the guardian
+            self.last_error = str(e)
+
+    def test(self):
+        self._post(dict(title="Aquila test alert", body="Phone notifications are working.",
+                        priority=3, tags="white_check_mark"))
+        return self.last_error is None
+
+
 # ============================ ORCHESTRATOR ==================================
 class Simulation:
     def __init__(self, seed=1):
@@ -697,6 +779,8 @@ class Simulation:
         self.history = []
         self.auto = True
         self.legacy_delay_h = LEGACY_DELAY_H
+        self.notifier = Notifier()
+        self.new_alerts = []
 
     def advance(self, k=1):
         for _ in range(k):
@@ -706,6 +790,7 @@ class Simulation:
             self.world.valves = dict(self.aquila.valves)
             self.world.blocked_ips = set(self.aquila.blocked_ips)
             self.last_tick = tk
+            self.new_alerts += self.notifier.dispatch(self.aquila.incidents, tk["tick"])
             self.history.append(dict(tick=tk["tick"], legacy_alarms=len(self.legacy.alarms),
                                      min_trust=float(self.aquila.trust.min()), classes=s["classes"]))
         a = self.aquila.roi
@@ -875,8 +960,20 @@ def run_ui():
         if st.button("🔧 Crew repaired / reset", use_container_width=True):
             sim.repair(); sim.advance(3)
         sim.auto = st.toggle("Automated valve quarantine", sim.auto)
+        st.divider()
+        st.header("📱 Phone alerts")
+        sim.notifier.topic = st.text_input("ntfy topic (same in the phone app)", sim.notifier.topic)
+        sim.notifier.enabled = st.toggle("Send to phone", sim.notifier.enabled)
+        if st.button("Send test alert", use_container_width=True):
+            ok = sim.notifier.test()
+            st.success("Sent - check your phone") if ok else st.error(sim.notifier.last_error)
+        if sim.notifier.last_error:
+            st.caption(f"Last send error: {sim.notifier.last_error}")
         sim.legacy_delay_h = st.slider("Legacy detection delay (h) [assumption]", 1, 168, sim.legacy_delay_h)
 
+    for a in sim.new_alerts:                      # on-screen pop-ups too
+        st.toast(f"**{a['title']}**\n\n{a['body']}", icon="🚨" if a["priority"] >= 4 else "⚠️")
+    sim.new_alerts = []
     S = sim.aquila.summary
     roi = sim.aquila.roi
     c = st.columns(5)
@@ -1024,6 +1121,28 @@ def run_demo():
     s.aquila.log.chain[2]["payload"] = {"x": 1}
     ok, bad = s.aquila.log.verify()
     check("tampering detected", (not ok) and bad == 2, f"broken at {bad}")
+
+    print("9) Phone notifications (local mock server)")
+    import http.server
+    got = []
+
+    class H(http.server.BaseHTTPRequestHandler):
+        def do_POST(self):
+            got.append((self.path, dict(self.headers), self.rfile.read(int(self.headers["Content-Length"])).decode()))
+            self.send_response(200); self.end_headers(); self.wfile.write(b"ok")
+        def log_message(self, *a): pass
+    srv = http.server.HTTPServer(("127.0.0.1", 0), H)
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    s = fresh()
+    s.notifier = Notifier("demo-topic", f"http://127.0.0.1:{srv.server_port}", enabled=True)
+    s.notifier.sync = True
+    s.world.burst_pipe(12, 25); s.world.hack_sensor(8, "fake_burst", True); s.advance(5)
+    srv.shutdown()
+    kinds = sorted(p[1]["Title"] for p in got)
+    check("pop-ups sent to topic", len(got) >= 2 and all(p[0] == "/demo-topic" for p in got), str(kinds))
+    check("leak is urgent (priority 5)", any(p[1]["Priority"] == "5" for p in got))
+    check("each incident sent once", len(got) == len(s.notifier.sent))
+    print("     sample:", got[0][1]["Title"], "|", got[0][2][:90])
 
     print(f"\n{sum(results)}/{len(results)} checks passed")
     return all(results)
