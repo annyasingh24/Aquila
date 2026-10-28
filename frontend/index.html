@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Aquila — AI Guardian for City Water Networks</title>
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Chart.js for Before vs After Analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <!-- Toast Alert Notifications Container -->
+  <div id="toasts"></div>
+
+  <!-- Welcome Modal -->
+  <div id="modal" onclick="dismissModal()">
+    <div class="m" onclick="event.stopPropagation()">
+      <button class="x" onclick="dismissModal()">×</button>
+      <h2>💧 Welcome to Aquila</h2>
+      <p class="sub">A city’s water pipes are its bloodstream. Hackers can fake sensor data, but they can’t fake physics.</p>
+      <ol>
+        <li>Drag the 3D network to rotate, scroll to zoom.</li>
+        <li>Click any glowing sensor to inspect its live state.</li>
+        <li>Launch attacks in the Simulator to inspect Before vs After graphs.</li>
+      </ol>
+      <button class="btn" onclick="dismissModal()">Enter the Digital Twin →</button>
+    </div>
+  </div>
+
+  <!-- Top Navigation Bar -->
+  <nav>
+    <div class="logo"><i></i>AQUILA <span class="wavy-cursive" style="font-size:15px; margin-left:6px; opacity:0.85;">Water Guardian</span></div>
+
+    <!-- Zones & Features Navigation Dropdown -->
+    <div class="nav-zones-dropdown-container">
+      <button type="button" class="nav-zones-btn" onclick="toggleNavZones(event)" title="Jump to any section, zone, or report">
+        <span>🧭</span>
+        <span>Explore Zones & Features</span>
+        <span style="font-size:9px; opacity:0.6;">▼</span>
+      </button>
+      <div id="nav-zones-menu" class="nav-zones-menu hide">
+        <div class="theme-menu-title">Digital Twin & Sandbox</div>
+        <a href="#twin" class="nav-zone-item" onclick="navigateToSection('twin', event)">
+          <span class="nav-zone-icon">🧬</span>
+          <div>
+            <div class="nav-zone-title">Digital Twin</div>
+            <div class="nav-zone-sub">3D Polytech'Lille WebGL pipe network</div>
+          </div>
+        </a>
+        <a href="#sim" class="nav-zone-item" onclick="navigateToSection('sim', event)">
+          <span class="nav-zone-icon">🧪</span>
+          <div>
+            <div class="nav-zone-title">Attack Simulator</div>
+            <div class="nav-zone-sub">Cyber spoofs, bursts & pressure zone testing</div>
+          </div>
+        </a>
+
+        <div class="theme-menu-title">Alerts & Field Operations</div>
+        <a href="#dispatch" class="nav-zone-item" onclick="navigateToSection('dispatch', event)">
+          <span class="nav-zone-icon">📱</span>
+          <div>
+            <div class="nav-zone-title">📱 Phone Alerts</div>
+            <div class="nav-zone-sub">Real physical smartphone push dispatch</div>
+          </div>
+        </a>
+        <a href="#feat" class="nav-zone-item" onclick="openCornerReportFromMenu(event)">
+          <span class="nav-zone-icon">📄</span>
+          <div>
+            <div class="nav-zone-title" style="color:var(--ac); font-weight:700;">📄 Incident Report</div>
+            <div class="nav-zone-sub">Instant cryptographic audit & .txt download</div>
+          </div>
+        </a>
+
+        <div class="theme-menu-title">Intelligence & Architecture</div>
+        <a href="#analytics" class="nav-zone-item" onclick="navigateToSection('analytics', event)">
+          <span class="nav-zone-icon">📊</span>
+          <div>
+            <div class="nav-zone-title">Before vs After Graphs</div>
+            <div class="nav-zone-sub">Comparative telemetry deflection analysis</div>
+          </div>
+        </a>
+        <a href="#trust" class="nav-zone-item" onclick="navigateToSection('trust', event)">
+          <span class="nav-zone-icon">🐝</span>
+          <div>
+            <div class="nav-zone-title">Trust Swarm</div>
+            <div class="nav-zone-sub">Byzantine peer-to-peer consensus matrix</div>
+          </div>
+        </a>
+        <a href="#war" class="nav-zone-item" onclick="navigateToSection('war', event)">
+          <span class="nav-zone-icon">⚔️</span>
+          <div>
+            <div class="nav-zone-title">Warzone</div>
+            <div class="nav-zone-sub">God-mode split-screen: Legacy vs Aquila</div>
+          </div>
+        </a>
+        <a href="#feat" class="nav-zone-item" onclick="navigateToSection('feat', event)">
+          <span class="nav-zone-icon">✨</span>
+          <div>
+            <div class="nav-zone-title">Features</div>
+            <div class="nav-zone-sub">Physical equations, invariants & architecture</div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <button type="button" class="btn" onclick="openPitchDirector()" style="padding:6px 14px; font-size:12px; margin-left:6px; background:linear-gradient(135deg, #ec4899, #8b5cf6); box-shadow:0 0 15px rgba(236,72,153,0.4); color:#fff; border:none;">🎤 Pitch Demo</button>
+    
+    <!-- Theme Palette Dropdown -->
+    <div class="theme-picker-container">
+      <button type="button" class="theme-picker-btn" onclick="toggleThemePicker(event)" title="Change background color theme">
+        <span id="theme-icon">🎨</span>
+        <span id="theme-label">Theme</span>
+        <span id="theme-dot" class="theme-dot-preview"></span>
+        <span style="font-size:9px; opacity:0.6;">▼</span>
+      </button>
+      <div id="theme-dropdown" class="theme-menu hide">
+        <div class="theme-menu-title">Artisan Palettes</div>
+        <button type="button" class="theme-opt" data-theme="matcha" onclick="setTheme('matcha')">
+          <span>🍵 Matcha Latte</span>
+          <span class="theme-swatch" style="background:#142316; border-color:#4ade80;"></span>
+        </button>
+        <button type="button" class="theme-opt" data-theme="chocolate" onclick="setTheme('chocolate')">
+          <span>🍫 Dark Chocolate</span>
+          <span class="theme-swatch" style="background:#1b110b; border-color:#e09f67;"></span>
+        </button>
+        
+        <div class="theme-menu-title">Pretty Pastels</div>
+        <button type="button" class="theme-opt" data-theme="sakura" onclick="setTheme('sakura')">
+          <span>🌸 Sakura Blossom</span>
+          <span class="theme-swatch" style="background:#fff0f5; border-color:#ec4899;"></span>
+        </button>
+        <button type="button" class="theme-opt" data-theme="lavender" onclick="setTheme('lavender')">
+          <span>💜 Lavender Mist</span>
+          <span class="theme-swatch" style="background:#f4f0fb; border-color:#8b5cf6;"></span>
+        </button>
+        <button type="button" class="theme-opt" data-theme="mint" onclick="setTheme('mint')">
+          <span>🌿 Mint Sorbet</span>
+          <span class="theme-swatch" style="background:#eefaf4; border-color:#10b981;"></span>
+        </button>
+        <button type="button" class="theme-opt" data-theme="cloud" onclick="setTheme('cloud')">
+          <span>☁️ Cloud Nine</span>
+          <span class="theme-swatch" style="background:#edf5ff; border-color:#3b82f6;"></span>
+        </button>
+        <button type="button" class="theme-opt" data-theme="buttercream" onclick="setTheme('buttercream')">
+          <span>🍯 Buttercream Honey</span>
+          <span class="theme-swatch" style="background:#fdfcee; border-color:#f59e0b;"></span>
+        </button>
+
+        <div class="theme-menu-title">Classics</div>
+        <button type="button" class="theme-opt" data-theme="dark" onclick="setTheme('dark')">
+          <span>🌙 Midnight Deep</span>
+          <span class="theme-swatch" style="background:#050b16; border-color:#22d3ee;"></span>
+        </button>
+        <button type="button" class="theme-opt" data-theme="light" onclick="setTheme('light')">
+          <span>☀️ Ocean Breeze</span>
+          <span class="theme-swatch" style="background:#f2f7fb; border-color:#0891b2;"></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <h1><span class="wavy-cursive hero-word">Water</span> can’t lie. <b>Sensors can.</b></h1>
+    <p>Aquila is an AI guardian for municipal <span class="wavy-cursive" style="font-size:1.15em;">water</span> networks. It tells a real broken pipe from a hacked or faulty sensor, using fluid <span class="wavy-cursive" style="font-size:1.15em;">physics</span> as its lie detector.</p>
+    <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
+      <a class="btn" href="#twin">Explore the 3D Twin</a>
+      <a class="btn g" href="#sim">Open Attack Simulator</a>
+      <button type="button" class="btn" onclick="openPitchDirector()" style="background:linear-gradient(135deg, #ec4899, #8b5cf6); box-shadow:0 8px 30px -8px #ec4899; color:#fff; border:none;">🎤 Start Live Pitch Demo</button>
+    </div>
+
+    <!-- Quick Background Palette Chips -->
+    <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-top:20px; flex-wrap:wrap;">
+      <span style="font-size:11.5px; font-weight:800; color:var(--mu); letter-spacing:0.5px;">🎨 BACKGROUND THEMES:</span>
+      <button type="button" class="preset-pill" onclick="setTheme('matcha')" style="border-color:#4ade80; color:var(--tx);" title="Matcha Latte Theme">🍵 Matcha</button>
+      <button type="button" class="preset-pill" onclick="setTheme('chocolate')" style="border-color:#e09f67; color:var(--tx);" title="Dark Chocolate Theme">🍫 Chocolate</button>
+      <button type="button" class="preset-pill" onclick="setTheme('sakura')" style="border-color:#ec4899; color:var(--tx);" title="Sakura Blossom Pastel">🌸 Sakura</button>
+      <button type="button" class="preset-pill" onclick="setTheme('lavender')" style="border-color:#8b5cf6; color:var(--tx);" title="Lavender Mist Pastel">💜 Lavender</button>
+      <button type="button" class="preset-pill" onclick="setTheme('mint')" style="border-color:#10b981; color:var(--tx);" title="Mint Sorbet Pastel">🌿 Mint</button>
+      <button type="button" class="preset-pill" onclick="setTheme('cloud')" style="border-color:#3b82f6; color:var(--tx);" title="Cloud Nine Pastel">☁️ Cloud Nine</button>
+      <button type="button" class="preset-pill" onclick="setTheme('buttercream')" style="border-color:#f59e0b; color:var(--tx);" title="Buttercream Honey Pastel">🍯 Buttercream</button>
+      <button type="button" class="preset-pill" onclick="setTheme('dark')" style="border-color:var(--ln); color:var(--mu);" title="Midnight Deep">🌙 Dark</button>
+    </div>
+
+    <div class="stats">
+      <div><b data-n="40">0</b><span>% <span class="wavy-cursive" style="font-size:1.15em;">water</span> lost to silent leaks</span></div>
+      <div><b data-n="4">0</b><span>threat classes in one glance</span></div>
+      <div><b data-n="0">0</b><span>$ lost when Aquila defends</span></div>
+    </div>
+  </header>
+
+  <!-- 3D DIGITAL TWIN -->
+  <section id="twin">
+    <h2>Live Digital Twin — Real-World Campus Benchmark</h2>
+    <p class="sub">3D Volumetric Digital Twin of the <b>University of Lille (Polytech'Lille)</b> <span class="wavy-cursive" style="font-size:1.15em;">Drinking Water</span> Network. Red beacon nodes mark physical <b><span class="wavy-cursive" style="font-size:1.15em;">Water Quality</span> Sensors</b> (Polytech'Lille & Barrois Restaurant); cyan nodes mark <b>Water Meters</b>; golden blocks mark campus buildings.</p>
+    <div class="stage" id="stage">
+      <div class="ov al" style="z-index:45;">
+        <span class="chip on" data-k="ok" style="cursor:pointer;" title="Click to view Normal status">🟦 Normal</span>
+        <span class="chip" data-k="leak" style="cursor:pointer;" title="Click to simulate Real Leak">💧 Real Leak</span>
+        <span class="chip" data-k="contam" style="cursor:pointer;" title="Click to simulate Contamination">☣ Contamination</span>
+        <span class="chip" data-k="spoof" style="cursor:pointer;" title="Click to simulate Cyber Spoof">🛑 Cyber Spoof</span>
+      </div>
+      <div class="ov" style="top:14px; right:14px; pointer-events:none; display:flex; flex-direction:column; align-items:flex-end; gap:6px; z-index:45;">
+        <div style="background:rgba(7,18,31,0.88); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.15); border-radius:12px; padding:8px 14px; text-align:right; pointer-events:auto;">
+          <div style="font-weight:800; font-size:13px; color:#e6f1fb; display:flex; align-items:center; justify-content:flex-end; gap:6px;">
+            <span>📍</span> Polytech'Lille Campus Network
+          </div>
+          <div style="font-size:11px; color:#9bb7d0; margin-top:5px; display:flex; gap:8px; align-items:center; justify-content:flex-end; flex-wrap:wrap;">
+            <button type="button" onclick="showCard(6)" style="background:rgba(255,45,85,0.18); border:1px solid #ff2d55; border-radius:6px; padding:4px 8px; color:#ff8fa3; font-size:11px; font-weight:700; cursor:pointer;" title="Click to inspect Polytech'Lille Quality Sensor"><i style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#ff2d55; box-shadow:0 0 8px #ff2d55; vertical-align:middle; margin-right:4px;"></i>Quality Sensors</button>
+            <button type="button" onclick="showCard(12)" style="background:rgba(34,211,238,0.18); border:1px solid #22d3ee; border-radius:6px; padding:4px 8px; color:#7dd3fc; font-size:11px; font-weight:700; cursor:pointer;" title="Click to inspect Central Water Meter"><i style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#22d3ee; box-shadow:0 0 8px #22d3ee; vertical-align:middle; margin-right:4px;"></i>Water Meters</button>
+            <button type="button" onclick="showCard(14)" style="background:rgba(223,177,123,0.18); border:1px solid #dfb17b; border-radius:6px; padding:4px 8px; color:#fed7aa; font-size:11px; font-weight:700; cursor:pointer;" title="Click to inspect Campus Buildings"><i style="display:inline-block; width:8px; height:8px; background:#dfb17b; border-radius:2px; vertical-align:middle; margin-right:4px;"></i>Buildings</button>
+          </div>
+        </div>
+        <div style="background:rgba(7,18,31,0.7); backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:4px 10px; font-size:11px; color:#38bdf8; font-weight:700;">
+          ▲ N · 360m Scale
+        </div>
+      </div>
+      <div id="pinsContainer" style="position:absolute; inset:0; pointer-events:none; z-index:32; overflow:hidden;"></div>
+      <div class="ov hint" style="bottom:78px; left:14px; z-index:40;">
+        Click any floating icon or sensor · Drag to orbit<br>
+        <span style="opacity:0.8;font-size:11px;">Ctrl + scroll to zoom · or use 🔍+/−</span>
+      </div>
+      <div id="hoverBadge" style="display:none; position:absolute; pointer-events:none; z-index:50; background:rgba(7,18,31,0.95); border:1px solid #38bdf8; border-radius:8px; padding:5px 11px; font-size:12px; font-weight:700; color:#e6f1fb; box-shadow:0 6px 20px rgba(0,0,0,0.5); white-space:nowrap;"></div>
+      <div class="ov" id="card" style="z-index:45;">
+        <button class="x" id="cx">×</button>
+        <h4 id="cn"></h4>
+        <small id="cs"></small>
+        <div class="bar"><i id="cb"></i></div>
+        <div id="cd" style="font-size:13px"></div>
+      </div>
+      <div class="ctl">
+        <button data-s="leak">💧 Simulate Leak</button>
+        <button data-s="attack">🛑 Cyberattack</button>
+        <button data-s="contam">☣ Contamination</button>
+        <button data-s="reset">↺ Reset</button>
+        <button type="button" onclick="zoomIn()" title="Zoom In">🔍 +</button>
+        <button type="button" onclick="zoomOut()" title="Zoom Out">🔍 −</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ATTACK SIMULATOR -->
+  <section id="sim">
+    <h2>🧪 Cyberattack & Contamination <span class="wavy-cursive">Simulator</span></h2>
+    <p class="sub">Select any junction node to launch targeted cyber spoofs, toxic spills, or pipe bursts. Watch the <span class="wavy-cursive">physics engine</span> expose the liar and calculate <span class="wavy-cursive">ground truth</span> in real time.</p>
+
+    <div class="sim-box">
+      <div class="sim-tabs">
+        <button class="sim-tab active" onclick="setSimMode('cyber', this)">🛑 Cyberattack Spoof</button>
+        <button class="sim-tab" onclick="setSimMode('contam', this)">☣️ Toxic Contamination (Patient Zero)</button>
+        <button class="sim-tab" onclick="setSimMode('stealth', this)">🦹 Stealth Replay Hack</button>
+        <button class="sim-tab" onclick="setSimMode('leak', this)">💧 Physical Pipe Burst</button>
+        <button class="sim-tab" onclick="setSimMode('multi', this)">💥 Coordinated Multi-Attack</button>
+      </div>
+
+      <div class="sim-controls">
+        <!-- Target Mode Selector & Presets Row -->
+        <div class="sim-input-grp" style="grid-column: 1 / -1; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; background:rgba(255,255,255,0.03); padding:10px 14px; border-radius:12px; border:1px solid var(--ln);">
+          <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+            <label style="margin:0; font-weight:700; font-size:12px; color:var(--tx);">TARGETING MODE:</label>
+            <div style="display:flex; gap:6px;">
+              <button type="button" class="mode-pill active" id="btn-mode-single" onclick="setTargetMode('single')">🎯 Single Target</button>
+              <button type="button" class="mode-pill" id="btn-mode-zone" onclick="setTargetMode('zone')">🗺️ Pressure Zone</button>
+              <button type="button" class="mode-pill" id="btn-mode-multi" onclick="setTargetMode('multi')">🌐 Custom Multi-Node</button>
+            </div>
+          </div>
+          <div id="multi-presets" style="display:none; gap:6px; align-items:center; flex-wrap:wrap;">
+            <span style="font-size:11px; color:var(--mu); font-weight:700;">PRESETS:</span>
+            <button type="button" class="preset-pill" onclick="loadMultiPreset('quality')">⚡ Dual Quality (S6 + S8)</button>
+            <button type="button" class="preset-pill" onclick="loadMultiPreset('quad')">🌪️ Quad Burst (S4, S8, S12, S17)</button>
+            <button type="button" class="preset-pill" onclick="loadMultiPreset('tri')">☣️ Tri-Zone Toxin (S6, S15, S20)</button>
+            <button type="button" class="preset-pill" onclick="loadMultiPreset('botnet')">🦹 5-Node Sybil Botnet</button>
+          </div>
+        </div>
+
+        <!-- Pressure Zone Dropdown Box -->
+        <div class="sim-input-grp" id="zone-target-box" style="display:none; grid-column: 1 / -1; background:rgba(255,255,255,0.02); border:1px solid var(--ln); border-radius:14px; padding:16px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
+            <label style="margin:0; font-size:13px; font-weight:800; color:var(--tx);">Select Municipal Pressure Zone</label>
+            <span class="pill-tag ok" id="zone-badge" style="font-size:11px;">🏥 Hospital Priority 1</span>
+          </div>
+          <select id="sim-zone-select" class="feature-selector" style="margin-bottom:12px; font-weight:700;" onchange="onZoneSelectChange(this.value)">
+            <option value="hospital">🏥 Zone 1: City Hospital Life-Safety District (Nodes S13, S18, S19)</option>
+            <option value="polytech">🔬 Zone 2: Polytech & Sciences Research Quad (Nodes S6, S7, S11, S16)</option>
+            <option value="barrois">🍽️ Zone 3: Barrois Dining & Commercial District (Nodes S8, S9, S14)</option>
+            <option value="lilliad">🏢 Zone 4: LILLIAD Central Innovation Hub (Nodes S2, S3, S12)</option>
+            <option value="eastern">⚡ Zone 5: Eastern Arterial & Nanotech Sector (Nodes S4, S5, S10, S15, S20)</option>
+            <option value="reservoir">🏔️ Zone 6: Mountain Reservoir & Bulk Feeder (Nodes S0, S1, S21, S22)</option>
+            <option value="blacksky">🌪️ Zone 7: Whole-Grid Multi-Sector Stress Test (All 24 Nodes)</option>
+          </select>
+
+          <!-- Zone Info Banner -->
+          <div id="zone-info-banner" style="background:var(--pan); border:1px solid var(--ln); border-radius:10px; padding:12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+            <div style="max-width:600px;">
+              <div id="zone-info-title" style="font-size:13px; font-weight:700; color:var(--tx);">Zone 1: City Hospital Life-Safety District</div>
+              <div id="zone-info-desc" style="font-size:11.5px; color:var(--mu); margin-top:3px;">Critical medical facilities. Smart Valve Doctor enforces minimum 15m pressure floor (≥48 psi).</div>
+            </div>
+            <div style="display:flex; gap:14px; align-items:center;">
+              <div style="text-align:right;">
+                <span style="font-size:10.5px; color:var(--mu); text-transform:uppercase; letter-spacing:0.5px;">Target Nodes:</span>
+                <div id="zone-info-nodes" style="font-size:12px; font-weight:800; color:var(--ac);">S13, S18, S19</div>
+              </div>
+              <div style="text-align:right;">
+                <span style="font-size:10.5px; color:var(--mu); text-transform:uppercase; letter-spacing:0.5px;">Normal Head:</span>
+                <div id="zone-info-head" style="font-size:12px; font-weight:800; color:var(--ok);">52.4 psi</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Single Target Dropdown -->
+        <div class="sim-input-grp" id="single-target-box">
+          <label>Target Sensor Junction</label>
+          <select id="sim-target"></select>
+        </div>
+
+        <!-- Multi Target Selection Grid -->
+        <div class="sim-input-grp" id="multi-target-box" style="display:none; grid-column: 1 / -1;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; flex-wrap:wrap; gap:8px;">
+            <label style="margin:0;">Select Multiple Attack Nodes (<span id="multi-count">2</span> selected)</label>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <button type="button" class="preset-pill" onclick="toggleAllMulti(true)">Select All (24)</button>
+              <button type="button" class="preset-pill" onclick="randomMulti(3)">Random 3</button>
+              <button type="button" class="preset-pill" onclick="randomMulti(5)">Random 5</button>
+              <button type="button" class="preset-pill" onclick="toggleAllMulti(false)">Clear</button>
+            </div>
+          </div>
+          <div class="node-chip-grid" id="multi-chip-grid"></div>
+        </div>
+
+        <div class="sim-input-grp" id="sim-param-box">
+          <label>Spoofed Pressure Value (Reported)</label>
+          <select id="sim-spoof-val">
+            <option value="0">0.0 psi (Fake Catastrophic Burst)</option>
+            <option value="12">12.0 psi (Low Pressure Alarm)</option>
+            <option value="95">95.0 psi (Fake Surge)</option>
+          </select>
+        </div>
+
+        <div class="sim-input-grp" style="display:flex; align-items:flex-end;">
+          <button class="btn" style="width:100%; border-radius:10px; padding:10px 14px;" onclick="runCustomSimulation()">
+            ⚡ Execute Attack Simulation
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Telemetry & Swarm Voting Proof -->
+      <div class="sim-panel">
+        <div class="sim-hud">
+          <h4>📡 Live Telemetry & Packet Inspection</h4>
+          <div class="hud-metric"><span>Target Node:</span> <b id="hud-node">S8</b></div>
+          <div class="hud-metric"><span>Reported Telemetry:</span> <span id="hud-reported" class="pill-tag bad">0.0 psi (ALARM)</span></div>
+          <div class="hud-metric"><span>Packet Fingerprint:</span> <span id="hud-packet" style="font-family:monospace;">IP: 185.220.101.47 | TTL: 52 (FORGED)</span></div>
+          <div class="hud-metric"><span>HMAC Signature:</span> <span id="hud-hmac" class="pill-tag bad">INVALID SIGNATURE</span></div>
+          <div class="hud-metric"><span>Ghost Sensor (Physics Derived):</span> <span id="hud-ghost" class="pill-tag ok">58.4 psi (ACCURATE)</span></div>
+          <div class="hud-metric"><span>Automated Action:</span> <span id="hud-action" class="pill-tag ok">IP FIREWALLED · GHOST ENGAGED</span></div>
+        </div>
+
+        <div class="sim-hud">
+          <h4>🐝 Swarm Byzantine Consensus (Neighbor Ballots)</h4>
+          <p style="color:var(--mu); font-size:12px; margin:0 0 6px;">Neighbors test mass conservation $\sum Q_{in} = \sum Q_{out}$. Any sensor contradicting physics is evicted without cloud delay.</p>
+          <table class="sim-votes-tbl">
+            <thead>
+              <tr><th>Voter</th><th>Implied Pressure</th><th>Ballot</th><th>Trust Weight</th></tr>
+            </thead>
+            <tbody id="sim-votes-body">
+              <tr><td>Sensor S1</td><td>58.2 psi</td><td><span class="pill-tag bad">VOTE: LIAR</span></td><td>100%</td></tr>
+              <tr><td>Sensor S7</td><td>59.1 psi</td><td><span class="pill-tag bad">VOTE: LIAR</span></td><td>100%</td></tr>
+              <tr><td>Sensor S9</td><td>57.8 psi</td><td><span class="pill-tag bad">VOTE: LIAR</span></td><td>100%</td></tr>
+              <tr><td>Sensor S13</td><td>58.6 psi</td><td><span class="pill-tag bad">VOTE: LIAR</span></td><td>100%</td></tr>
+            </tbody>
+          </table>
+          <div id="patient-zero-box" style="margin-top:10px; display:none; background:color-mix(in srgb,var(--pu) 15%,transparent); border:1px solid var(--pu); padding:8px 12px; border-radius:8px;">
+            <b style="color:var(--pu);">🕵️ Patient Zero Identified:</b> <span id="pz-path">Node S6 (~160 min ago, 99.9% fit). Path: S6 ➔ S7 ➔ S8</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Forensic Incident Report Bar -->
+      <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--ln); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="font-size:22px;">🛡️</span>
+          <div>
+            <div style="font-weight:700; font-size:13.5px; color:var(--tx);">Cryptographic Incident Flight Recorder</div>
+            <div style="font-size:11.5px; color:var(--mu);">SHA-256 chain verification with physical mass conservation proof</div>
+          </div>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button type="button" class="btn" onclick="downloadForensicReport()" style="padding:10px 18px; font-size:13px; background:linear-gradient(135deg, #0ea5e9, #6366f1); color:#fff; border:none; box-shadow:0 6px 20px -4px rgba(14,165,233,0.4); display:flex; align-items:center; gap:6px; cursor:pointer;" title="1-Click Direct File Download (.txt)">
+            <span>💾</span> Download Audit Report (.txt)
+          </button>
+          <button type="button" class="btn g" onclick="toggleCornerReport(true)" style="padding:10px 16px; font-size:13px; display:flex; align-items:center; gap:6px; cursor:pointer;" title="Dock report in bottom-right corner">
+            <span>📄</span> View in Corner Option
+          </button>
+          <button type="button" class="btn g" onclick="copyForensicReport()" style="padding:10px 14px; font-size:13px; display:flex; align-items:center; gap:6px; cursor:pointer;" title="Copy to clipboard">
+            <span>📋</span> Copy
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REAL PHYSICAL PHONE DISPATCH & LIVE DEMO CENTER -->
+  <section id="dispatch">
+    <h2>📱 Connect Your Physical Phone (<span class="wavy-cursive">Real-World Alert Dispatch</span>)</h2>
+    <p class="sub">Pair your actual smartphone in seconds. When an attack, burst, or chemical contamination is detected, an <span class="wavy-cursive">emergency alert banner</span> pops up directly on your physical phone with sound and vibration.</p>
+
+    <div class="sim-box" style="margin-top:16px;">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:24px; align-items:start;">
+        
+        <!-- Step 1: Phone Number Input & Controls -->
+        <div style="background:var(--bg); border:1px solid var(--ln); border-radius:18px; padding:22px;">
+          <div style="display:inline-block; background:rgba(34,211,238,0.15); color:var(--ac); font-size:11px; font-weight:800; padding:3px 10px; border-radius:99px; margin-bottom:10px; text-transform:uppercase;">
+            Step 1: Your Mobile Number
+          </div>
+          <h3 style="margin:0 0 10px; font-size:17px; display:flex; align-items:center; gap:8px;">
+            <span>📞</span> Enter Your Phone Number
+          </h3>
+          <p style="font-size:13px; color:var(--mu); margin:0 0 14px;">
+            Enter your mobile number to create your encrypted emergency dispatch channel.
+          </p>
+
+          <div class="sim-input-grp" style="margin-bottom:12px;">
+            <label for="dispatch-phone">Your Mobile Phone Number</label>
+            <div style="display:flex; gap:8px;">
+              <input type="text" id="dispatch-phone" value="aquila-emergency" placeholder="aquila-emergency or mobile number" oninput="onPhoneInputChanged()" style="flex:1; font-weight:700; font-size:15px; letter-spacing:0.5px;">
+              <button type="button" class="btn" onclick="savePhoneNumber(true)" style="padding:10px 16px; font-size:13px;">Save</button>
+            </div>
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-top:5px; flex-wrap:wrap; gap:6px;">
+              <small id="phone-saved-msg" style="color:var(--ok); font-size:11.5px; display:none; font-weight:600;">✓ Channel paired to your phone number</small>
+              <button type="button" class="preset-pill" onclick="setSimpleEmergencyTopic()" style="font-size:11px; padding:3px 8px; border-radius:6px; background:rgba(56,189,248,0.1); color:var(--ac); border:1px solid rgba(56,189,248,0.25); cursor:pointer;">
+                ⚡ Or use simple topic: aquila-emergency
+              </button>
+            </div>
+          </div>
+
+          <div style="background:rgba(0,0,0,0.22); border:1px solid var(--ln); border-radius:12px; padding:10px 14px; margin-bottom:14px;">
+            <div style="font-size:11px; color:var(--mu); font-weight:700; text-transform:uppercase; margin-bottom:3px;">Paired Dispatch Topic:</div>
+            <div style="font-family:monospace; font-size:13px; color:var(--ac); font-weight:700;" id="topic-display-name">ntfy.sh/aquila-9876543210</div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <button type="button" class="btn" onclick="triggerTestEmergencyAlert()" style="width:100%; padding:12px 16px; font-size:14px; font-weight:800; background:linear-gradient(135deg, #ef4444, #f97316); box-shadow:0 8px 25px -5px rgba(239,68,68,0.5); color:#fff; border:none; cursor:pointer;">
+              🚨 Send Test Alert to My Real Phone
+            </button>
+            
+            <button type="button" id="btn-auto-guardian" class="btn" onclick="toggleAutoGuardian()" style="width:100%; padding:11px 14px; font-size:13px; font-weight:700; background:rgba(56,189,248,0.12); border:1px solid #38bdf8; color:#38bdf8; display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer;">
+              <span>🤖</span> Enable Auto-Dispatch Mode (Sends on its own)
+            </button>
+            
+            <div style="display:flex; gap:8px;">
+              <button type="button" class="btn g" onclick="sendWhatsAppAlert()" style="flex:1; padding:10px 12px; font-size:12.5px; display:flex; align-items:center; justify-content:center; gap:6px; background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);" title="Send alert via WhatsApp">
+                <span>💬</span> WhatsApp Alert
+              </button>
+              <button type="button" class="btn g" onclick="openTopicDirectly()" style="flex:1; padding:10px 12px; font-size:12.5px; display:flex; align-items:center; justify-content:center; gap:6px;" title="Open subscriber page in a new tab">
+                <span>↗</span> Open Channel
+              </button>
+            </div>
+            <small style="font-size:10.5px; color:var(--mu); text-align:center; line-height:1.4;">
+              💡 <b>Auto-Send Tip:</b> WhatsApp requires you to tap the green "Send" arrow in chat. For 100% hands-free popups on your lockscreen without touching your phone, use the free <b>ntfy</b> app in Step 2!
+            </small>
+
+            <!-- Live Delivery Status Banner -->
+            <div id="dispatch-delivery-status" style="display:none; background:rgba(0,0,0,0.3); border:1px solid var(--ln); border-radius:10px; padding:10px 12px; font-size:12px;"></div>
+          </div>
+        </div>
+
+        <!-- Step 2: Real Phone Pairing & Options -->
+        <div style="background:var(--bg); border:1px solid var(--ln); border-radius:18px; padding:22px; display:flex; flex-direction:column; align-items:center; text-align:center;">
+          <div style="display:inline-block; background:rgba(74,222,128,0.15); color:var(--ok); font-size:11px; font-weight:800; padding:3px 10px; border-radius:99px; margin-bottom:10px; text-transform:uppercase;">
+            Step 2: Connect Phone (Instant Setup)
+          </div>
+          <h3 style="margin:0 0 8px; font-size:17px; display:flex; align-items:center; gap:8px;">
+            <span>📲</span> Get Alerts on Your Phone
+          </h3>
+
+          <!-- Method Cards -->
+          <div style="width:100%; text-align:left; background:rgba(0,0,0,0.2); border:1px solid var(--ln); border-radius:12px; padding:12px; margin-bottom:12px; font-size:12px; line-height:1.5;">
+            <div style="font-weight:800; color:var(--tx); margin-bottom:4px; display:flex; align-items:center; gap:6px;">
+              <span style="background:#22c55e; color:#000; font-size:10px; padding:1px 6px; border-radius:4px; font-weight:800;">EASIEST</span> 
+              <span>💬 1-Click WhatsApp (No Apps Needed)</span>
+            </div>
+            <div style="color:var(--mu); margin-bottom:6px;">
+              Click the green <b>WhatsApp Alert</b> button. The full emergency dispatch opens directly on WhatsApp to your phone number!
+            </div>
+            <hr style="border:none; border-top:1px solid var(--ln); margin:8px 0;">
+            <div style="font-weight:800; color:var(--tx); margin-bottom:4px; display:flex; align-items:center; gap:6px;">
+              <span style="background:#38bdf8; color:#000; font-size:10px; padding:1px 6px; border-radius:4px; font-weight:800;">LOCKSCREEN</span> 
+              <span>🔔 Push Notification (App Store / Play Store)</span>
+            </div>
+            <div style="color:var(--mu); font-size:11.5px;">
+              1. Download free <b>ntfy</b> app on iPhone (App Store) or Android (Play Store).<br>
+              2. Open app ➔ tap <b>+</b> ➔ type topic shown below (or scan QR).<br>
+              3. Done! Chimes & buzzes directly on your lockscreen!
+            </div>
+          </div>
+
+          <!-- Live QR Code Image -->
+          <div style="background:#fff; padding:10px; border-radius:12px; box-shadow:0 8px 25px rgba(0,0,0,0.25); margin-bottom:10px;">
+            <img id="qr-code-img" src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=https://ntfy.sh/aquila-9876543210" alt="Scan to subscribe on your real phone" width="130" height="130" style="display:block;">
+          </div>
+
+          <a id="topic-direct-link" href="https://ntfy.sh/aquila-9876543210" target="_blank" rel="noopener noreferrer" style="font-size:12px; color:var(--ac); font-weight:700; text-decoration:none; display:flex; align-items:center; gap:4px;">
+            <span>🔗</span> Open ntfy.sh topic on phone ↗
+          </a>
+        </div>
+
+        <!-- Step 3: Live Pitch Director / Presentation Mode -->
+        <div style="background:radial-gradient(circle at 80% 20%, rgba(124,58,237,0.18), rgba(7,18,31,0.6)); border:1px solid rgba(124,58,237,0.35); border-radius:18px; padding:22px; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="display:inline-block; background:rgba(124,58,237,0.25); color:#c084fc; font-size:11px; font-weight:800; padding:3px 10px; border-radius:99px; margin-bottom:10px; text-transform:uppercase;">
+              Step 3: Live Demo Pitch
+            </div>
+            <h3 style="margin:0 0 10px; font-size:17px; color:var(--tx);">
+              🎤 Interactive Live Demo Script
+            </h3>
+            <p style="font-size:13px; color:var(--mu); line-height:1.6; margin:0 0 16px;">
+              Presenting to judges or evaluators? Keep your phone face-up on the desk. Launch the pitch director to show attacks on the 3D twin while your real phone buzzes with emergency dispatches in real time!
+            </p>
+          </div>
+
+          <button type="button" class="btn" onclick="openPitchDirector()" style="width:100%; padding:13px; font-size:14px; font-weight:800; background:linear-gradient(135deg, #7c3aed, #06b6d4); box-shadow:0 8px 25px -5px rgba(124,58,237,0.5); color:#fff; border:none;">
+            🚀 Launch Pitch Walkthrough Director
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- BEFORE VS AFTER ANALYTICS -->
+  <section id="analytics">
+    <h2>📊 Before vs After <span class="wavy-cursive">Attack Analytics</span></h2>
+    <p class="sub">Compare baseline physical telemetry against attack deflections and Aquila's <span class="wavy-cursive">physics-reconstructed truth</span>.</p>
+
+    <div class="analytics-box">
+      <div class="graph-tabs">
+        <button class="graph-tab active" onclick="switchGraph('pressure', this)">📈 Pressure Spectrum (psi)</button>
+        <button class="graph-tab" onclick="switchGraph('residual', this)">⚖️ Mass Conservation Residuals (L/s)</button>
+        <button class="graph-tab" onclick="switchGraph('trust', this)">🐝 Sensor Trust Score (%)</button>
+        <button class="graph-tab" onclick="switchGraph('quality', this)">🧪 Chlorine Depletion & Contamination</button>
+      </div>
+
+      <div class="graph-stage">
+        <canvas id="analyticsChart"></canvas>
+      </div>
+
+      <div class="graph-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#38bdf8;"></div> <span>Baseline Safe Operation (Unperturbed Telemetry)</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff2d55;"></div> <span>Received Telemetry (Attack Spoof / Real Deflection)</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:#4ade80;"></div> <span>Aquila Ground Truth (Physics Reconstruction)</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SENSOR TRUST SWARM -->
+  <section id="trust">
+    <h2>Sensor <span class="wavy-cursive">Trust Swarm</span></h2>
+    <p class="sub">Every sensor is an autonomous agent. When neighbours disagree with a lone outlier, the swarm votes to isolate it using <span class="wavy-cursive">Byzantine consensus</span> without cloud dependency.</p>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <!-- GOD MODE WARZONE -->
+  <section id="war">
+    <h2>God Mode <span class="wavy-cursive">Warzone</span></h2>
+    <p class="sub">Same spoofing attack, two defenders. Watch legacy SCADA panic while <span class="wavy-cursive">fluid dynamics</span> saves the grid.</p>
+    <p><button class="btn" id="wb">⚔ Launch spoofing attack</button></p>
+    <div class="war">
+      <div class="pane L">
+        <h3>Legacy SCADA</h3>
+        <small>Blindly trusts sensors</small>
+        <div class="money" id="ml">$0</div>
+        <div class="log" id="ll"></div>
+      </div>
+      <div class="pane R">
+        <h3>Aquila Neural Defense</h3>
+        <small>Physics-checked consensus</small>
+        <div class="money" id="mr">$0</div>
+        <div class="log" id="lr"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES DROPDOWN INSPECTOR -->
+  <section id="feat">
+    <h2>Everything inside <span class="wavy-cursive">Aquila</span></h2>
+    <p class="sub">Select any core capability from the dropdown below to explore its <span class="wavy-cursive">physical principles</span>, architecture, and fail-safe defenses.</p>
+
+    <div class="feature-dropdown-box">
+      <select class="feature-selector" id="feature-select" onchange="renderFeatureDetail(this.value)">
+        <option value="twin">🧬 Digital Twin (EPANET Linear Hydraulic Simulator)</option>
+        <option value="trust">🕵️ Sensor Trust Score (0–100% Bayesian Degradation)</option>
+        <option value="classifier">🚦 Four-Way Instant Threat Classifier</option>
+        <option value="swarm">🐝 Federated Sensor Swarm (Byzantine Fault Tolerance)</option>
+        <option value="mesh">✨ 3D Volumetric Particle Flow Mesh</option>
+        <option value="valve">🏥 Smart Valve Doctor (Hospital Floor Protection ≥15m)</option>
+        <option value="pz">🕵️ Patient Zero Backtracker (Reverse Fluid Dynamic DAG)</option>
+        <option value="audit">🔒 Cryptographic SHA-256 Flight Recorder</option>
+      </select>
+
+      <div class="feature-content-card" id="feature-card">
+        <h3 id="feat-title">🧬 Digital Twin</h3>
+        <p id="feat-desc">Runs an EPANET-style live linear hydraulic simulation in real time. Predicts expected pressure heads and advective transport times. Water entering a junction must equal water leaving it: if telemetry breaks the equation, Aquila detects it instantly.</p>
+        <div class="feature-tag-list" id="feat-tags">
+          <span class="pill-tag ok">Mass Conservation Law</span>
+          <span class="pill-tag ok">Matrix Inversion Solver</span>
+          <span class="pill-tag ok">Zero Cloud Latency</span>
+        </div>
+      </div>
+
+      <!-- Forensic Incident Report Bar -->
+      <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--ln); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="font-size:22px;">🛡️</span>
+          <div>
+            <div style="font-weight:700; font-size:13.5px; color:var(--tx);">Cryptographic Incident Flight Recorder</div>
+            <div style="font-size:11.5px; color:var(--mu);">SHA-256 chain verification with physical mass conservation proof</div>
+          </div>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button type="button" class="btn" onclick="downloadForensicReport()" style="padding:10px 18px; font-size:13px; background:linear-gradient(135deg, #0ea5e9, #6366f1); color:#fff; border:none; box-shadow:0 6px 20px -4px rgba(14,165,233,0.4); display:flex; align-items:center; gap:6px; cursor:pointer;" title="1-Click Direct File Download (.txt)">
+            <span>💾</span> Download Audit Report (.txt)
+          </button>
+          <button type="button" class="btn g" onclick="toggleCornerReport(true)" style="padding:10px 16px; font-size:13px; display:flex; align-items:center; gap:6px; cursor:pointer;" title="Dock report in bottom-right corner">
+            <span>📄</span> View in Corner Option
+          </button>
+          <button type="button" class="btn g" onclick="copyForensicReport()" style="padding:10px 14px; font-size:13px; display:flex; align-items:center; gap:6px; cursor:pointer;" title="Copy to clipboard">
+            <span>📋</span> Copy
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INTERACTIVE PITCH DIRECTOR MODAL -->
+  <div id="pitch-modal" class="hide" onclick="closePitchDirector(event)">
+    <div class="pitch-card" onclick="event.stopPropagation()">
+      <button class="x" onclick="closePitchDirector()">×</button>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <span style="font-size:11px; font-weight:800; color:var(--ac); letter-spacing:0.5px; text-transform:uppercase;">
+          🎤 LIVE PITCH DIRECTOR · STEP <span id="pitch-step-num">1</span> OF 4
+        </span>
+        <div style="display:flex; gap:6px;" id="pitch-dots">
+          <span class="pitch-dot active"></span>
+          <span class="pitch-dot"></span>
+          <span class="pitch-dot"></span>
+          <span class="pitch-dot"></span>
+        </div>
+      </div>
+
+      <!-- Pitch Slide Content -->
+      <div id="pitch-slide-content">
+        <!-- Dynamically populated by JS -->
+      </div>
+
+      <!-- Bottom Controls -->
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:24px; padding-top:16px; border-top:1px solid var(--ln);">
+        <button type="button" class="btn g" id="pitch-prev-btn" onclick="prevPitchStep()" style="padding:8px 16px; font-size:13px;">
+          ← Previous Step
+        </button>
+        <div style="display:flex; gap:8px;">
+          <button type="button" class="btn g" onclick="closePitchDirector()" style="padding:8px 14px; font-size:13px;">
+            Exit Director
+          </button>
+          <button type="button" class="btn" id="pitch-next-btn" onclick="nextPitchStep()" style="padding:8px 18px; font-size:13px; color:#fff; border:none;">
+            Next Step →
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLOATING CORNER OPTION FOR FORENSIC REPORT (NO POPUP) -->
+  <div id="corner-report-widget" class="corner-report-widget">
+    <!-- Sleek Corner Dropup Panel (Docked in the corner, never blocks center of screen, no modal backdrop) -->
+    <div id="corner-report-panel" class="corner-report-panel hide">
+      <div class="corner-panel-header">
+        <div>
+          <div style="font-size:10px; font-weight:800; color:var(--ac); letter-spacing:0.5px;">AQUILA FLIGHT RECORDER · CORNER AUDIT</div>
+          <div style="font-size:13px; font-weight:800; color:var(--tx); display:flex; align-items:center; gap:6px;">
+            <span>📄</span> Official Incident Dossier
+          </div>
+        </div>
+        <button class="x" onclick="toggleCornerReport(false)" style="position:static; padding:2px 8px; font-size:16px; cursor:pointer;" title="Close Corner Panel">×</button>
+      </div>
+
+      <!-- Live Report Preview inside Corner Panel -->
+      <div id="corner-report-preview" class="corner-report-preview"></div>
+
+      <div class="corner-panel-actions">
+        <div style="font-size:11px; color:var(--mu); display:flex; align-items:center; gap:4px;">
+          <span>🔒</span> SHA-256 Verified
+        </div>
+        <div style="display:flex; gap:6px;">
+          <button type="button" class="btn g" onclick="copyForensicReport()" style="padding:6px 12px; font-size:11.5px; display:flex; align-items:center; gap:4px; cursor:pointer;">
+            <span>📋</span> Copy
+          </button>
+          <button type="button" class="btn" onclick="downloadForensicReport()" style="padding:6px 14px; font-size:11.5px; background:linear-gradient(135deg, #0ea5e9, #6366f1); color:#fff; border:none; display:flex; align-items:center; gap:4px; box-shadow:0 4px 12px -2px #0ea5e9; cursor:pointer;">
+            <span>💾</span> Download (.txt)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Corner Docked Pill -->
+    <div class="corner-report-pill" onclick="toggleCornerReport()" title="Toggle Incident Report in Corner">
+      <span class="corner-pulse-dot"></span>
+      <span style="font-weight:700; font-size:12.5px; color:var(--tx); display:flex; align-items:center; gap:6px;">
+        <span>📄</span> Incident Report
+      </span>
+      <button type="button" class="corner-download-btn" onclick="event.stopPropagation(); downloadForensicReport();" title="1-Click Instant Download (.txt)">
+        <span>💾</span> .txt
+      </button>
+      <span id="corner-chevron" style="font-size:10px; color:var(--mu); transition:transform .2s ease;">▲</span>
+    </div>
+  </div>
+
+  <footer>Aquila · Hackers can’t hack gravity.</footer>
+
+  <!-- Three.js Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- Modular Scripts -->
+  <script src="js/digital_twin.js"></script>
+  <script src="js/analytics.js"></script>
+  <script src="js/simulator.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

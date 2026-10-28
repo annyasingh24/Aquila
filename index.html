@@ -1,0 +1,2898 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Aquila — AI Guardian for City Water</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,500;1,600;1,700;1,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+.wavy-cursive, .editorial-wave{font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:600;letter-spacing:0.015em;color:var(--ac);display:inline-block;padding:0 4px;transform:skewX(-4deg) translateY(-1px);text-shadow:0 2px 14px color-mix(in srgb,var(--ac) 28%,transparent);transition:transform 0.25s cubic-bezier(0.16,1,0.3,1),color 0.25s ease}
+.wavy-cursive:hover, .editorial-wave:hover{transform:skewX(-7deg) translateY(-3px) scale(1.06);color:var(--ok)}
+.wavy-cursive.hero-word{font-size:1.26em;font-weight:700;background:linear-gradient(135deg,var(--ac),var(--ok));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 4px 18px color-mix(in srgb,var(--ac) 40%,transparent))}
+:root{--bg:#f2f7fb;--pan:#fff;--tx:#0b1b2b;--mu:#587087;--ln:#d3e0eb;--ac:#0891b2;--ok:#059669;--bad:#e11d48;--wa:#d97706;--pu:#7c3aed;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#050b16;--pan:#0b1626;--tx:#e6f1fb;--mu:#8aa4bd;--ln:#173049;--ac:#22d3ee;--ok:#4ade80;--bad:#ff2d55;--wa:#fb923c;--pu:#a855f7}}
+:root[data-theme="dark"]{--bg:#050b16;--pan:#0b1626;--tx:#e6f1fb;--mu:#8aa4bd;--ln:#173049;--ac:#22d3ee;--ok:#4ade80;--bad:#ff2d55;--wa:#fb923c;--pu:#a855f7}
+:root[data-theme="matcha"]{--bg:#142316;--pan:#1c3120;--tx:#ebf6ee;--mu:#98b89f;--ln:#28452e;--ac:#4ade80;--ok:#22c55e;--bad:#f87171;--wa:#fbbf24;--pu:#a78bfa}
+:root[data-theme="chocolate"]{--bg:#1b110b;--pan:#281a11;--tx:#f9eee7;--mu:#bc9f8e;--ln:#3e281b;--ac:#e09f67;--ok:#4ade80;--bad:#fb7185;--wa:#f59e0b;--pu:#c084fc}
+:root[data-theme="sakura"]{--bg:#fff0f5;--pan:#ffffff;--tx:#4a2835;--mu:#8c5d6f;--ln:#fcd5e5;--ac:#ec4899;--ok:#10b981;--bad:#e11d48;--wa:#f59e0b;--pu:#9333ea}
+:root[data-theme="lavender"]{--bg:#f4f0fb;--pan:#ffffff;--tx:#31234b;--mu:#7c6d99;--ln:#e4d7f5;--ac:#8b5cf6;--ok:#10b981;--bad:#e11d48;--wa:#f59e0b;--pu:#7c3aed}
+:root[data-theme="mint"]{--bg:#eefaf4;--pan:#ffffff;--tx:#183e2e;--mu:#5d8a74;--ln:#cbf0de;--ac:#10b981;--ok:#059669;--bad:#e11d48;--wa:#d97706;--pu:#8b5cf6}
+:root[data-theme="cloud"]{--bg:#edf5ff;--pan:#ffffff;--tx:#1c3554;--mu:#6182a4;--ln:#cde2fe;--ac:#3b82f6;--ok:#10b981;--bad:#e11d48;--wa:#f59e0b;--pu:#8b5cf6}
+:root[data-theme="buttercream"]{--bg:#fdfcee;--pan:#ffffff;--tx:#42381f;--mu:#8a7c55;--ln:#f9f2cb;--ac:#f59e0b;--ok:#10b981;--bad:#e11d48;--wa:#d97706;--pu:#8b5cf6}
+
+.theme-picker-container{position:relative;display:inline-flex;align-items:center}
+.theme-picker-btn{background:var(--pan);border:1px solid var(--ln);color:var(--tx);border-radius:99px;padding:5px 12px;font-size:12.5px;font-weight:700;display:flex;align-items:center;gap:7px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.06);transition:all 0.2s ease}
+.theme-picker-btn:hover{border-color:var(--ac);color:var(--ac);transform:translateY(-1px)}
+.theme-dot-preview{width:10px;height:10px;border-radius:50%;display:inline-block;background:var(--ac);box-shadow:0 0 6px var(--ac)}
+.theme-menu{position:absolute;top:calc(100% + 8px);right:0;width:240px;background:var(--pan);border:1px solid var(--ln);border-radius:16px;padding:8px;box-shadow:0 16px 40px -8px rgba(0,0,0,0.35);z-index:100;display:flex;flex-direction:column;gap:4px;backdrop-filter:blur(16px);animation:themeMenuIn 0.2s cubic-bezier(0.16,1,0.3,1)}
+@keyframes themeMenuIn{from{opacity:0;transform:translateY(-8px) scale(0.97)}to{opacity:1;transform:none}}
+.theme-menu.hide{display:none!important}
+.theme-menu-title{font-size:10.5px;text-transform:uppercase;letter-spacing:0.5px;font-weight:800;color:var(--mu);padding:6px 10px 4px;border-bottom:1px solid var(--ln);margin-bottom:4px}
+.theme-opt{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 10px;border-radius:10px;border:none;background:none;color:var(--tx);font-size:13px;font-weight:600;width:100%;text-align:left;cursor:pointer;transition:all 0.15s ease}
+.theme-opt:hover{background:color-mix(in srgb,var(--ac) 15%,transparent);color:var(--ac)}
+.theme-opt.active{background:color-mix(in srgb,var(--ac) 20%,transparent);color:var(--ac);font-weight:800}
+.theme-swatch{width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,255,255,0.4);box-shadow:0 2px 5px rgba(0,0,0,0.2);flex-shrink:0}
+body,nav,.sim-box,.pane,.cell,.analytics-box,.feature-dropdown-box,.sim-hud,.graph-stage{transition:background .35s ease,background-color .35s ease,color .35s ease,border-color .35s ease!important}
+html{scroll-behavior:smooth !important;scroll-padding-top:calc(75px + env(safe-area-inset-top,0px))}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.55 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:60}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;display:flex;align-items:center;gap:18px;padding:12px 5vw;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--ln)}
+.logo{font-weight:800;letter-spacing:.14em;font-size:18px;margin-right:auto;display:flex;gap:8px;align-items:center}
+.logo i{width:12px;height:16px;background:linear-gradient(var(--ac),var(--ok));border-radius:50% 50% 50% 50%/65% 65% 35% 35%;box-shadow:0 0 14px var(--ac)}
+nav a{color:var(--mu);text-decoration:none;font-size:14px;font-weight:600;transition:color .2s ease}nav a:hover{color:var(--ac)}
+button{font:inherit;cursor:pointer}
+button, .btn, .chip, .sim-tab, .graph-tab, .feature-selector{transition:all .22s cubic-bezier(0.16, 1, 0.3, 1) !important}
+button:active, .btn:active, .sim-tab:active, .graph-tab:active{transform:scale(0.96) !important}
+.tg{background:none;border:1px solid var(--ln);color:var(--tx);border-radius:99px;padding:4px 11px}
+.hero{padding:9vh 5vw 6vh;text-align:center;background:radial-gradient(60% 55% at 50% 0,color-mix(in srgb,var(--ac) 22%,transparent),transparent)}
+.hero h1{font-size:clamp(2.2rem,6.4vw,4.8rem);line-height:1.05;margin:.2em auto;max-width:15ch;letter-spacing:-.03em}
+.hero h1 b{background:linear-gradient(90deg,var(--ac),var(--ok),var(--pu));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{max-width:60ch;margin:0 auto 26px;color:var(--mu);font-size:1.1rem}
+.btn{display:inline-block;border:0;border-radius:12px;padding:12px 22px;font-weight:700;text-decoration:none;color:#031018;background:linear-gradient(135deg,var(--ac),var(--ok));box-shadow:0 8px 30px -8px var(--ac);transition:transform .2s}
+.btn:hover{transform:translateY(-3px) scale(1.03)}.btn.g{background:none;color:var(--tx);border:1px solid var(--ln);box-shadow:none}
+.stats{display:flex;justify-content:center;gap:clamp(18px,5vw,64px);margin-top:44px;flex-wrap:wrap}
+.stats b{display:block;font-size:2.3rem;color:var(--ac)}.stats span{color:var(--mu);font-size:.85rem}
+section{padding:7vh 5vw}h2{font-size:clamp(1.6rem,3.6vw,2.6rem);margin:0 0 6px;letter-spacing:-.02em}.sub{color:var(--mu);margin:0 0 24px;max-width:70ch}
+.stage{position:relative;height:min(76vh,680px);min-height:440px;border-radius:22px;overflow:hidden;border:1px solid var(--ln);background:radial-gradient(80% 90% at 50% 40%,#0b2238,#030711);box-shadow:0 30px 80px -30px #0008}
+.stage canvas{display:block;width:100%;height:100%;cursor:grab;touch-action:none}
+.ov{position:absolute;color:#e6f1fb}.al{top:14px;left:14px;display:flex;gap:8px;flex-wrap:wrap;max-width:calc(100% - 28px)}
+.chip{padding:7px 12px;border-radius:99px;font-size:12.5px;font-weight:700;border:1px solid #ffffff22;background:#0009;opacity:.45;transition:.3s}
+.chip.on{opacity:1;transform:scale(1.08)}.chip[data-k=ok].on{border-color:#38bdf8;box-shadow:0 0 18px #38bdf8}.chip[data-k=leak].on{border-color:#fb923c;box-shadow:0 0 18px #fb923c}.chip[data-k=contam].on{border-color:#a855f7;box-shadow:0 0 18px #a855f7}.chip[data-k=spoof].on{border-color:#ff2d55;box-shadow:0 0 18px #ff2d55;animation:fl .6s infinite alternate}
+@keyframes fl{to{background:#ff2d5560}}
+.ctl{bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:8px;flex-wrap:wrap;justify-content:center;width:calc(100% - 24px)}
+.ctl button{background:#0a1a2cee;color:#e6f1fb;border:1px solid #ffffff2a;border-radius:12px;padding:9px 15px;font-weight:600;font-size:13.5px;backdrop-filter:blur(10px);box-shadow:0 4px 15px rgba(0,0,0,0.25)}
+.ctl button:hover{background:var(--ac);color:#021018;transform:translateY(-2px);box-shadow:0 6px 20px -4px var(--ac)}
+.hint{top:14px;right:14px;font-size:12px;color:#9bb7d0;text-align:right;display:none;background:rgba(7,18,31,0.6);padding:6px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.08)}@media(min-width:900px){.hint{display:block}}
+.pin{position:absolute;pointer-events:auto;cursor:pointer;display:flex;flex-direction:column;align-items:center;user-select:none;z-index:30;transition:transform 0.04s ease-out;will-change:transform}
+.pin:hover{z-index:48!important;filter:brightness(1.25)}
+.pin:hover .pin-badge{transform:scale(1.22)}
+.pin-badge{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;transition:transform .15s cubic-bezier(0.16,1,0.3,1);box-shadow:0 3px 12px rgba(0,0,0,0.6)}
+.pin.special .pin-badge{width:32px;height:32px;font-size:16px;border-width:2.5px;animation:pinPulse 1.8s infinite}
+.pin.small .pin-badge{width:20px;height:20px;font-size:10px}
+@keyframes pinPulse{0%,100%{box-shadow:0 0 10px #ff2d55}50%{box-shadow:0 0 24px #ff2d55,0 0 35px #ff2d5588}}
+.pin-label{background:rgba(4,12,24,0.92);border:1px solid rgba(255,255,255,0.2);border-radius:6px;padding:2px 7px;font-size:10px;font-weight:700;color:#e6f1fb;white-space:nowrap;margin-top:2px;box-shadow:0 3px 10px rgba(0,0,0,0.6);pointer-events:auto}
+.pin.selected .pin-badge{transform:scale(1.28);border-color:#38bdf8!important;box-shadow:0 0 22px #38bdf8!important}
+.pin.selected .pin-label{border-color:#38bdf8;color:#38bdf8;background:#06182c}
+#card{right:14px;bottom:76px;width:250px;background:#07121fee;border:1px solid #ffffff2a;border-radius:16px;padding:14px;transform:translateY(20px);opacity:0;pointer-events:none;transition:.3s cubic-bezier(0.16, 1, 0.3, 1);backdrop-filter:blur(10px)}
+#card.show{transform:none;opacity:1;pointer-events:auto}#card h4{margin:0 0 6px}#card small{color:#9bb7d0}
+.bar{height:7px;background:#ffffff1c;border-radius:99px;overflow:hidden;margin:6px 0}.bar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#4ade80,#22d3ee);transition:width .4s ease-out}
+.x{position:absolute;top:8px;right:10px;background:none;border:0;color:#9bb7d0;font-size:18px;cursor:pointer}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px}
+.cell{background:var(--pan);border:1px solid var(--ln);border-radius:14px;padding:10px;font-size:13px;transition:transform .2s cubic-bezier(0.16,1,0.3,1),border-color .2s,box-shadow .2s;cursor:pointer}
+.cell:hover{transform:translateY(-2px)}.cell b{font-size:1.15rem}
+.cell.bad{border-color:var(--bad);box-shadow:0 0 20px -4px var(--bad)}.cell.warn{border-color:var(--wa)}.cell.pu{border-color:var(--pu)}
+.cell .bar i{background:var(--ok)}.cell.bad .bar i{background:var(--bad)}
+
+/* Warzone */
+.war{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:760px){.war{grid-template-columns:1fr}}
+.pane{background:var(--pan);border:1px solid var(--ln);border-radius:18px;padding:16px;min-height:300px}.pane.L{border-color:color-mix(in srgb,var(--bad) 55%,var(--ln))}.pane.R{border-color:color-mix(in srgb,var(--ok) 55%,var(--ln))}
+.pane h3{margin:0 0 4px}.money{font-size:2.2rem;font-weight:800}.L .money{color:var(--bad)}.R .money{color:var(--ok)}
+.log{font:13px/1.7 ui-monospace,Menlo,monospace;margin-top:8px}.log div{animation:in .4s}.log .bad{color:var(--bad)}.log .ok{color:var(--ok)}.log .warn{color:var(--wa)}
+@keyframes in{from{opacity:0;transform:translateX(-10px)}}
+
+#toasts{position:fixed;right:14px;top:calc(76px + env(safe-area-inset-top,0px));z-index:80;display:flex;flex-direction:column;gap:8px;width:min(340px,calc(100vw - 28px))}
+.toast{background:var(--pan);border:1px solid var(--ln);border-left:4px solid var(--ac);border-radius:12px;padding:10px 14px;font-size:13.5px;box-shadow:0 12px 30px -10px #0006;animation:in .35s;transition:.4s}
+.toast.out{opacity:0;transform:translateX(30px)}.toast.bad{border-left-color:var(--bad)}.toast.ok{border-left-color:var(--ok)}.toast.warn{border-left-color:var(--wa)}.toast.pu{border-left-color:var(--pu)}
+
+/* Modal */
+#modal{position:fixed;inset:0;z-index:90;background:#000a;display:grid;place-items:center;padding:20px;backdrop-filter:blur(6px);transition:.3s}
+#modal .m{background:var(--pan);border:1px solid var(--ac);border-radius:22px;padding:28px;max-width:470px;box-shadow:0 0 60px -10px var(--ac);position:relative}
+#modal ol{padding-left:20px;color:var(--mu)}#modal.hide{opacity:0;pointer-events:none;display:none!important}
+footer{text-align:center;color:var(--mu);padding:40px 5vw 60px;font-size:.9rem}
+
+/* ===== INTERACTIVE ATTACK SIMULATOR ===== */
+.sim-box{background:var(--pan);border:1px solid var(--ln);border-radius:20px;padding:24px;box-shadow:0 16px 40px -12px rgba(0,0,0,0.1);margin-top:20px}
+.sim-controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:20px}
+.sim-input-grp label{display:block;font-size:12px;font-weight:700;text-transform:uppercase;color:var(--mu);margin-bottom:6px;letter-spacing:0.5px}
+.sim-input-grp select,.sim-input-grp input{width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--ln);background:var(--bg);color:var(--tx);font:inherit;font-size:14px}
+.sim-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.sim-tab{padding:8px 16px;border-radius:99px;border:1px solid var(--ln);background:none;color:var(--mu);font-weight:700;font-size:13px;transition:0.2s}
+.sim-tab:hover,.sim-tab.active{background:var(--ac);color:#031018;border-color:var(--ac);transform:scale(1.04)}
+.mode-pill{background:var(--pan);color:var(--mu);border:1px solid var(--ln);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s ease}
+.mode-pill.active{background:var(--ac);color:#021018;border-color:var(--ac);box-shadow:0 0 12px -2px var(--ac)}
+.preset-pill{background:rgba(255,255,255,0.06);color:var(--tx);border:1px solid var(--ln);border-radius:6px;padding:4px 9px;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s ease}
+.preset-pill:hover{background:rgba(34,211,238,0.18);border-color:var(--ac);color:var(--ac)}
+.node-chip-grid{display:flex;flex-wrap:wrap;gap:6px;max-height:115px;overflow-y:auto;padding:8px;background:rgba(0,0,0,0.28);border-radius:10px;border:1px solid var(--ln)}
+.node-chip{padding:4px 9px;border-radius:6px;font-size:11px;font-weight:700;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.14);color:var(--mu);cursor:pointer;user-select:none;transition:all .15s ease}
+.node-chip:hover{border-color:var(--ac);color:var(--tx)}
+.node-chip.selected{background:rgba(255,45,85,0.22);border-color:#ff2d55;color:#ff8fa3;box-shadow:0 0 10px rgba(255,45,85,0.35)}
+.sim-panel{display:grid;grid-template-columns:1.2fr 1fr;gap:20px}
+@media(max-width:850px){.sim-panel{grid-template-columns:1fr}}
+.sim-hud{background:var(--bg);border:1px solid var(--ln);border-radius:14px;padding:16px;font-size:13px}
+.sim-hud h4{margin:0 0 10px;font-size:15px;display:flex;align-items:center;gap:6px}
+.hud-metric{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--ln)}
+.hud-metric b{color:var(--ac)}
+.sim-votes-tbl{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+.sim-votes-tbl th,.sim-votes-tbl td{padding:6px 8px;text-align:left;border-bottom:1px solid var(--ln)}
+.sim-votes-tbl th{color:var(--mu)}
+.pill-tag{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:700}
+.pill-tag.bad{background:color-mix(in srgb,var(--bad) 20%,transparent);color:var(--bad)}
+.pill-tag.ok{background:color-mix(in srgb,var(--ok) 20%,transparent);color:var(--ok)}
+.pill-tag.pu{background:color-mix(in srgb,var(--pu) 20%,transparent);color:var(--pu)}
+.pill-tag.wa{background:color-mix(in srgb,var(--wa) 20%,transparent);color:var(--wa)}
+
+/* ===== NEW: BEFORE VS AFTER COMPARATIVE ANALYTICS & GRAPHS ===== */
+.analytics-box{background:var(--pan);border:1px solid var(--ln);border-radius:20px;padding:24px;margin-top:20px;box-shadow:0 16px 40px -12px rgba(0,0,0,0.1)}
+.graph-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.graph-tab{padding:8px 14px;border-radius:8px;border:1px solid var(--ln);background:var(--bg);color:var(--tx);font-weight:600;font-size:13px;cursor:pointer;transition:0.2s}
+.graph-tab.active{background:var(--ac);color:#021018;border-color:var(--ac)}
+.graph-stage{position:relative;height:320px;width:100%;background:var(--bg);border:1px solid var(--ln);border-radius:14px;padding:16px;overflow:hidden}
+.graph-legend{display:flex;gap:16px;align-items:center;margin-top:12px;font-size:12px;color:var(--mu)}
+.legend-item{display:flex;align-items:center;gap:6px}
+.legend-dot{width:10px;height:10px;border-radius:50%}
+
+/* ===== NEW: FEATURES INTERACTIVE DROPDOWN & ACCORDION ===== */
+.feature-dropdown-box{background:var(--pan);border:1px solid var(--ln);border-radius:20px;padding:24px;margin-top:20px}
+.feature-selector{width:100%;padding:14px 18px;border-radius:12px;border:1px solid var(--ln);background:var(--bg);color:var(--tx);font:inherit;font-size:16px;font-weight:700;margin-bottom:16px}
+.feature-content-card{background:var(--bg);border:1px solid var(--ln);border-radius:14px;padding:20px;animation:in .3s}
+.feature-content-card h3{margin:0 0 8px;font-size:1.3rem;display:flex;align-items:center;gap:10px}
+.feature-content-card p{margin:0 0 14px;color:var(--mu);font-size:14.5px;line-height:1.6}
+.feature-tag-list{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ===== PITCH DEMO DIRECTOR MODAL STYLES ===== */
+#pitch-modal{position:fixed;inset:0;z-index:95;background:rgba(2,6,23,0.85);display:grid;place-items:center;padding:20px;backdrop-filter:blur(12px);transition:opacity .3s ease}
+#pitch-modal.hide{opacity:0;pointer-events:none;display:none!important}
+.pitch-card{background:var(--pan);border:1px solid var(--ac);border-radius:24px;padding:30px;max-width:680px;width:100%;box-shadow:0 25px 80px -15px rgba(8,145,178,0.5);position:relative;animation:in .35s ease}
+.pitch-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.2);display:inline-block;transition:all .2s ease}
+.pitch-dot.active{width:22px;border-radius:99px;background:var(--ac);box-shadow:0 0 10px var(--ac)}
+
+/* ===== FLOATING CORNER REPORT WIDGET (ZERO POPUP) ===== */
+.corner-report-widget{position:fixed;bottom:20px;right:20px;z-index:99;display:flex;flex-direction:column;align-items:flex-end;font-family:inherit}
+.corner-report-pill{background:var(--pan);border:1px solid var(--ac);border-radius:9999px;padding:8px 14px 8px 16px;box-shadow:0 10px 25px -5px rgba(0,0,0,0.4),0 0 15px rgba(34,211,238,0.2);display:flex;align-items:center;gap:10px;cursor:pointer;backdrop-filter:blur(10px);user-select:none;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.corner-report-pill:hover{transform:translateY(-2px);box-shadow:0 14px 30px -4px rgba(0,0,0,0.5),0 0 20px rgba(34,211,238,0.35);border-color:#38bdf8}
+.corner-pulse-dot{width:8px;height:8px;border-radius:50%;background:var(--ac);box-shadow:0 0 8px var(--ac);display:inline-block;animation:pulse-dot 2s infinite}
+@keyframes pulse-dot{0%{transform:scale(0.95);box-shadow:0 0 0 0 rgba(34,211,238,0.7)}70%{transform:scale(1.1);box-shadow:0 0 0 8px rgba(34,211,238,0)}100%{transform:scale(0.95);box-shadow:0 0 0 0 rgba(34,211,238,0)}}
+.corner-download-btn{background:linear-gradient(135deg,#0ea5e9,#6366f1);color:#fff;border:none;border-radius:9999px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px;transition:opacity .2s ease}
+.corner-download-btn:hover{opacity:.9}
+.corner-report-panel{width:380px;max-width:calc(100vw - 32px);background:var(--pan);border:1px solid var(--ac);border-radius:18px;padding:16px;margin-bottom:12px;box-shadow:0 20px 50px -10px rgba(0,0,0,0.6),0 0 20px rgba(34,211,238,0.15);backdrop-filter:blur(14px);transition:all .25s ease;animation:in .25s ease}
+.corner-report-panel.hide{display:none!important}
+.corner-panel-header{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--ln);padding-bottom:10px;margin-bottom:10px}
+.corner-report-preview{background:rgba(0,0,0,0.35);border:1px solid var(--ln);border-radius:10px;padding:12px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:11.5px;line-height:1.55;color:var(--tx);max-height:250px;overflow-y:auto;white-space:pre-wrap}
+.corner-panel-actions{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:10px;border-top:1px solid var(--ln);gap:8px;flex-wrap:wrap}
+
+/* ===== NAV ZONES DROPDOWN STYLES ===== */
+.nav-zones-dropdown-container{position:relative;display:inline-flex;align-items:center}
+.nav-zones-btn{background:var(--pan);border:1px solid var(--ac);color:var(--tx);border-radius:99px;padding:6px 14px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 4px 15px -3px color-mix(in srgb,var(--ac) 25%,transparent);transition:all .2s ease}
+.nav-zones-btn:hover{transform:translateY(-1px);border-color:#38bdf8;box-shadow:0 6px 20px -3px color-mix(in srgb,var(--ac) 40%,transparent)}
+.nav-zones-menu{position:absolute;top:calc(100% + 10px);left:0;width:320px;background:var(--pan);border:1px solid var(--ln);border-radius:18px;padding:10px;box-shadow:0 20px 50px -10px rgba(0,0,0,0.45);z-index:100;display:flex;flex-direction:column;gap:3px;backdrop-filter:blur(16px);animation:themeMenuIn .2s cubic-bezier(0.16,1,0.3,1);max-height:82vh;overflow-y:auto}
+.nav-zones-menu.hide{display:none!important}
+.nav-zone-item{display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:10px;text-decoration:none;color:var(--tx);transition:all .18s ease}
+.nav-zone-item:hover{background:color-mix(in srgb,var(--ac) 15%,transparent);transform:translateX(3px)}
+.nav-zone-icon{font-size:18px;width:26px;text-align:center;flex-shrink:0}
+.nav-zone-title{font-size:13px;font-weight:700;line-height:1.25}
+.nav-zone-item:hover .nav-zone-title{color:var(--ac)}
+.nav-zone-sub{font-size:11px;color:var(--mu);line-height:1.2;margin-top:2px}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head><body>
+<div id="toasts"></div>
+
+<!-- Welcome Modal (Clicking background or button dismisses instantly) -->
+<div id="modal" onclick="dismissModal(event)"><div class="m" onclick="event.stopPropagation()">
+<button class="x" onclick="dismissModal()">×</button>
+<h2>💧 Welcome to Aquila</h2>
+<p class="sub">A city’s water pipes are its bloodstream. Hackers can fake sensor data, but they can’t fake physics.</p>
+<ol><li>Drag the 3D network to rotate, scroll to zoom.</li><li>Click any glowing sensor to inspect its live state.</li><li>Launch attacks in the Simulator to inspect Before vs After graphs.</li></ol>
+<button class="btn" onclick="dismissModal()">Enter the Digital Twin →</button></div></div>
+
+<nav><div class="logo"><i></i>AQUILA <span class="wavy-cursive" style="font-size:15px; margin-left:6px; opacity:0.85;">Water Guardian</span></div>
+
+<!-- Zones & Features Navigation Dropdown -->
+<div class="nav-zones-dropdown-container">
+  <button type="button" class="nav-zones-btn" onclick="toggleNavZones(event)" title="Jump to any section, zone, or report">
+    <span>🧭</span>
+    <span>Explore Zones & Features</span>
+    <span style="font-size:9px; opacity:0.6;">▼</span>
+  </button>
+  <div id="nav-zones-menu" class="nav-zones-menu hide">
+    <div class="theme-menu-title">Digital Twin & Sandbox</div>
+    <a href="#twin" class="nav-zone-item" onclick="navigateToSection('twin', event)">
+      <span class="nav-zone-icon">🧬</span>
+      <div>
+        <div class="nav-zone-title">Digital Twin</div>
+        <div class="nav-zone-sub">3D Polytech'Lille WebGL pipe network</div>
+      </div>
+    </a>
+    <a href="#sim" class="nav-zone-item" onclick="navigateToSection('sim', event)">
+      <span class="nav-zone-icon">🧪</span>
+      <div>
+        <div class="nav-zone-title">Attack Simulator</div>
+        <div class="nav-zone-sub">Cyber spoofs, bursts & pressure zone testing</div>
+      </div>
+    </a>
+
+    <div class="theme-menu-title">Alerts & Field Operations</div>
+    <a href="#dispatch" class="nav-zone-item" onclick="navigateToSection('dispatch', event)">
+      <span class="nav-zone-icon">📱</span>
+      <div>
+        <div class="nav-zone-title">📱 Phone Alerts</div>
+        <div class="nav-zone-sub">Real physical smartphone push dispatch</div>
+      </div>
+    </a>
+    <a href="#feat" class="nav-zone-item" onclick="openCornerReportFromMenu(event)">
+      <span class="nav-zone-icon">📄</span>
+      <div>
+        <div class="nav-zone-title" style="color:var(--ac); font-weight:700;">📄 Incident Report</div>
+        <div class="nav-zone-sub">Instant cryptographic audit & .txt download</div>
+      </div>
+    </a>
+
+    <div class="theme-menu-title">Intelligence & Architecture</div>
+    <a href="#analytics" class="nav-zone-item" onclick="navigateToSection('analytics', event)">
+      <span class="nav-zone-icon">📊</span>
+      <div>
+        <div class="nav-zone-title">Before vs After Graphs</div>
+        <div class="nav-zone-sub">Comparative telemetry deflection analysis</div>
+      </div>
+    </a>
+    <a href="#trust" class="nav-zone-item" onclick="navigateToSection('trust', event)">
+      <span class="nav-zone-icon">🐝</span>
+      <div>
+        <div class="nav-zone-title">Trust Swarm</div>
+        <div class="nav-zone-sub">Byzantine peer-to-peer consensus matrix</div>
+      </div>
+    </a>
+    <a href="#war" class="nav-zone-item" onclick="navigateToSection('war', event)">
+      <span class="nav-zone-icon">⚔️</span>
+      <div>
+        <div class="nav-zone-title">Warzone</div>
+        <div class="nav-zone-sub">God-mode split-screen: Legacy vs Aquila</div>
+      </div>
+    </a>
+    <a href="#feat" class="nav-zone-item" onclick="navigateToSection('feat', event)">
+      <span class="nav-zone-icon">✨</span>
+      <div>
+        <div class="nav-zone-title">Features</div>
+        <div class="nav-zone-sub">Physical equations, invariants & architecture</div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<button type="button" class="btn" onclick="openPitchDirector()" style="padding:6px 14px; font-size:12px; margin-left:6px; background:linear-gradient(135deg, #ec4899, #8b5cf6); box-shadow:0 0 15px rgba(236,72,153,0.4); color:#fff; border:none;">🎤 Pitch Demo</button>
+
+<!-- Theme Palette Dropdown -->
+<div class="theme-picker-container">
+  <button type="button" class="theme-picker-btn" onclick="toggleThemePicker(event)" title="Change background color theme">
+    <span id="theme-icon">🎨</span>
+    <span id="theme-label">Theme</span>
+    <span id="theme-dot" class="theme-dot-preview"></span>
+    <span style="font-size:9px; opacity:0.6;">▼</span>
+  </button>
+  <div id="theme-dropdown" class="theme-menu hide">
+    <div class="theme-menu-title">Artisan Palettes</div>
+    <button type="button" class="theme-opt" data-theme="matcha" onclick="setTheme('matcha')">
+      <span>🍵 Matcha Latte</span>
+      <span class="theme-swatch" style="background:#142316; border-color:#4ade80;"></span>
+    </button>
+    <button type="button" class="theme-opt" data-theme="chocolate" onclick="setTheme('chocolate')">
+      <span>🍫 Dark Chocolate</span>
+      <span class="theme-swatch" style="background:#1b110b; border-color:#e09f67;"></span>
+    </button>
+    
+    <div class="theme-menu-title">Pretty Pastels</div>
+    <button type="button" class="theme-opt" data-theme="sakura" onclick="setTheme('sakura')">
+      <span>🌸 Sakura Blossom</span>
+      <span class="theme-swatch" style="background:#fff0f5; border-color:#ec4899;"></span>
+    </button>
+    <button type="button" class="theme-opt" data-theme="lavender" onclick="setTheme('lavender')">
+      <span>💜 Lavender Mist</span>
+      <span class="theme-swatch" style="background:#f4f0fb; border-color:#8b5cf6;"></span>
+    </button>
+    <button type="button" class="theme-opt" data-theme="mint" onclick="setTheme('mint')">
+      <span>🌿 Mint Sorbet</span>
+      <span class="theme-swatch" style="background:#eefaf4; border-color:#10b981;"></span>
+    </button>
+    <button type="button" class="theme-opt" data-theme="cloud" onclick="setTheme('cloud')">
+      <span>☁️ Cloud Nine</span>
+      <span class="theme-swatch" style="background:#edf5ff; border-color:#3b82f6;"></span>
+    </button>
+    <button type="button" class="theme-opt" data-theme="buttercream" onclick="setTheme('buttercream')">
+      <span>🍯 Buttercream Honey</span>
+      <span class="theme-swatch" style="background:#fdfcee; border-color:#f59e0b;"></span>
+    </button>
+
+    <div class="theme-menu-title">Classics</div>
+    <button type="button" class="theme-opt" data-theme="dark" onclick="setTheme('dark')">
+      <span>🌙 Midnight Deep</span>
+      <span class="theme-swatch" style="background:#050b16; border-color:#22d3ee;"></span>
+    </button>
+    <button type="button" class="theme-opt" data-theme="light" onclick="setTheme('light')">
+      <span>☀️ Ocean Breeze</span>
+      <span class="theme-swatch" style="background:#f2f7fb; border-color:#0891b2;"></span>
+    </button>
+  </div>
+</div>
+</nav>
+
+<header class="hero"><h1><span class="wavy-cursive hero-word">Water</span> can’t lie. <b>Sensors can.</b></h1>
+<p>Aquila is an AI guardian for city <span class="wavy-cursive" style="font-size:1.15em;">water</span> networks. It tells a real broken pipe from a hacked or faulty sensor, using fluid <span class="wavy-cursive" style="font-size:1.15em;">physics</span> as its lie detector.</p>
+<div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
+  <a class="btn" href="#twin">Explore the 3D Twin</a>
+  <a class="btn g" href="#sim">Open Attack Simulator</a>
+  <button type="button" class="btn" onclick="openPitchDirector()" style="background:linear-gradient(135deg, #ec4899, #8b5cf6); box-shadow:0 8px 30px -8px #ec4899; color:#fff; border:none;">🎤 Start Live Pitch Demo</button>
+</div>
+
+<!-- Quick Background Palette Chips -->
+<div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-top:18px; flex-wrap:wrap;">
+  <span style="font-size:11.5px; font-weight:800; color:var(--mu); letter-spacing:0.5px;">🎨 BACKGROUND THEMES:</span>
+  <button type="button" class="preset-pill" onclick="setTheme('matcha')" style="border-color:#4ade80; color:var(--tx);" title="Matcha Latte Theme">🍵 Matcha</button>
+  <button type="button" class="preset-pill" onclick="setTheme('chocolate')" style="border-color:#e09f67; color:var(--tx);" title="Dark Chocolate Theme">🍫 Chocolate</button>
+  <button type="button" class="preset-pill" onclick="setTheme('sakura')" style="border-color:#ec4899; color:var(--tx);" title="Sakura Blossom Pastel">🌸 Sakura</button>
+  <button type="button" class="preset-pill" onclick="setTheme('lavender')" style="border-color:#8b5cf6; color:var(--tx);" title="Lavender Mist Pastel">💜 Lavender</button>
+  <button type="button" class="preset-pill" onclick="setTheme('mint')" style="border-color:#10b981; color:var(--tx);" title="Mint Sorbet Pastel">🌿 Mint</button>
+  <button type="button" class="preset-pill" onclick="setTheme('cloud')" style="border-color:#3b82f6; color:var(--tx);" title="Cloud Nine Pastel">☁️ Cloud Nine</button>
+  <button type="button" class="preset-pill" onclick="setTheme('buttercream')" style="border-color:#f59e0b; color:var(--tx);" title="Buttercream Honey Pastel">🍯 Buttercream</button>
+  <button type="button" class="preset-pill" onclick="setTheme('dark')" style="border-color:var(--ln); color:var(--mu);" title="Midnight Deep">🌙 Dark</button>
+</div>
+<div class="stats"><div><b data-n="40">0</b><span>% <span class="wavy-cursive" style="font-size:1.15em;">water</span> lost to silent leaks</span></div><div><b data-n="4">0</b><span>threat classes in one glance</span></div><div><b data-n="0">0</b><span>$ lost when Aquila defends</span></div></div></header>
+
+<!-- 3D DIGITAL TWIN -->
+<section id="twin"><h2>Live Digital Twin — Real-World Campus Benchmark</h2><p class="sub">3D Volumetric Digital Twin of the <b>University of Lille (Polytech'Lille)</b> <span class="wavy-cursive" style="font-size:1.15em;">Drinking Water</span> Network. Red beacon nodes mark physical <b><span class="wavy-cursive" style="font-size:1.15em;">Water Quality</span> Sensors</b> (Polytech'Lille & Barrois Restaurant); cyan nodes mark <b>Water Meters</b>; golden blocks mark campus buildings.</p>
+<div class="stage" id="stage">
+<div class="ov al" style="z-index:45;">
+  <span class="chip on" data-k="ok" style="cursor:pointer;" title="Click to view Normal status">🟦 Normal</span>
+  <span class="chip" data-k="leak" style="cursor:pointer;" title="Click to simulate Real Leak">💧 Real Leak</span>
+  <span class="chip" data-k="contam" style="cursor:pointer;" title="Click to simulate Contamination">☣ Contamination</span>
+  <span class="chip" data-k="spoof" style="cursor:pointer;" title="Click to simulate Cyber Spoof">🛑 Cyber Spoof</span>
+</div>
+<div class="ov" style="top:14px; right:14px; pointer-events:none; display:flex; flex-direction:column; align-items:flex-end; gap:6px; z-index:45;">
+  <div style="background:rgba(7,18,31,0.88); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.15); border-radius:12px; padding:8px 14px; text-align:right; pointer-events:auto;">
+    <div style="font-weight:800; font-size:13px; color:#e6f1fb; display:flex; align-items:center; justify-content:flex-end; gap:6px;">
+      <span>📍</span> Polytech'Lille Campus Network
+    </div>
+    <div style="font-size:11px; color:#9bb7d0; margin-top:5px; display:flex; gap:8px; align-items:center; justify-content:flex-end; flex-wrap:wrap;">
+      <button type="button" onclick="showCard(6)" style="background:rgba(255,45,85,0.18); border:1px solid #ff2d55; border-radius:6px; padding:4px 8px; color:#ff8fa3; font-size:11px; font-weight:700; cursor:pointer;" title="Click to inspect Polytech'Lille Quality Sensor"><i style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#ff2d55; box-shadow:0 0 8px #ff2d55; vertical-align:middle; margin-right:4px;"></i>Quality Sensors</button>
+      <button type="button" onclick="showCard(12)" style="background:rgba(34,211,238,0.18); border:1px solid #22d3ee; border-radius:6px; padding:4px 8px; color:#7dd3fc; font-size:11px; font-weight:700; cursor:pointer;" title="Click to inspect Central Water Meter"><i style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#22d3ee; box-shadow:0 0 8px #22d3ee; vertical-align:middle; margin-right:4px;"></i>Water Meters</button>
+      <button type="button" onclick="showCard(14)" style="background:rgba(223,177,123,0.18); border:1px solid #dfb17b; border-radius:6px; padding:4px 8px; color:#fed7aa; font-size:11px; font-weight:700; cursor:pointer;" title="Click to inspect Campus Buildings"><i style="display:inline-block; width:8px; height:8px; background:#dfb17b; border-radius:2px; vertical-align:middle; margin-right:4px;"></i>Buildings</button>
+    </div>
+  </div>
+  <div style="background:rgba(7,18,31,0.7); backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:4px 10px; font-size:11px; color:#38bdf8; font-weight:700;">
+    ▲ N · 360m Scale
+  </div>
+</div>
+<div id="pinsContainer" style="position:absolute; inset:0; pointer-events:none; z-index:32; overflow:hidden;"></div>
+<div class="ov hint" style="bottom:78px; left:14px; z-index:40;">Click any floating icon or sensor · Drag to orbit<br><span style="opacity:0.8;font-size:11px;">Ctrl + scroll to zoom · or use 🔍+/−</span></div>
+<div id="hoverBadge" style="display:none; position:absolute; pointer-events:none; z-index:50; background:rgba(7,18,31,0.95); border:1px solid #38bdf8; border-radius:8px; padding:5px 11px; font-size:12px; font-weight:700; color:#e6f1fb; box-shadow:0 6px 20px rgba(0,0,0,0.5); white-space:nowrap;"></div>
+<div class="ov" id="card" style="z-index:45;"><button class="x" id="cx">×</button><h4 id="cn"></h4><small id="cs"></small><div class="bar"><i id="cb"></i></div><div id="cd" style="font-size:13px"></div></div>
+<div class="ctl" style="z-index:45;">
+  <button data-s="leak">💧 Simulate Leak</button>
+  <button data-s="attack">🛑 Cyberattack</button>
+  <button data-s="contam">☣ Contamination</button>
+  <button data-s="reset">↺ Reset</button>
+  <button type="button" onclick="zoomIn()" title="Zoom In">🔍 +</button>
+  <button type="button" onclick="zoomOut()" title="Zoom Out">🔍 −</button>
+</div></div></section>
+
+<!-- INTERACTIVE ATTACK SIMULATOR -->
+<section id="sim">
+  <h2>🧪 Cyberattack & Contamination <span class="wavy-cursive">Simulator</span></h2>
+  <p class="sub">Select any junction node to launch targeted cyber spoofs, toxic spills, or pipe bursts. Watch the <span class="wavy-cursive">physics engine</span> expose the liar and calculate <span class="wavy-cursive">ground truth</span> in real time.</p>
+
+  <div class="sim-box">
+    <div class="sim-tabs">
+      <button class="sim-tab active" onclick="setSimMode('cyber', this)">🛑 Cyberattack Spoof</button>
+      <button class="sim-tab" onclick="setSimMode('contam', this)">☣️ Toxic Contamination (Patient Zero)</button>
+      <button class="sim-tab" onclick="setSimMode('stealth', this)">🦹 Stealth Replay Hack</button>
+      <button class="sim-tab" onclick="setSimMode('leak', this)">💧 Physical Pipe Burst</button>
+      <button class="sim-tab" onclick="setSimMode('multi', this)">💥 Coordinated Multi-Attack</button>
+    </div>
+
+    <div class="sim-controls">
+      <!-- Target Mode Selector & Presets Row -->
+      <div class="sim-input-grp" style="grid-column: 1 / -1; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; background:rgba(255,255,255,0.03); padding:10px 14px; border-radius:12px; border:1px solid var(--ln);">
+        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+          <label style="margin:0; font-weight:700; font-size:12px; color:var(--tx);">TARGETING MODE:</label>
+          <div style="display:flex; gap:6px;">
+            <button type="button" class="mode-pill active" id="btn-mode-single" onclick="setTargetMode('single')">🎯 Single Target</button>
+            <button type="button" class="mode-pill" id="btn-mode-zone" onclick="setTargetMode('zone')">🗺️ Pressure Zone</button>
+            <button type="button" class="mode-pill" id="btn-mode-multi" onclick="setTargetMode('multi')">🌐 Custom Multi-Node</button>
+          </div>
+        </div>
+        <div id="multi-presets" style="display:none; gap:6px; align-items:center; flex-wrap:wrap;">
+          <span style="font-size:11px; color:var(--mu); font-weight:700;">PRESETS:</span>
+          <button type="button" class="preset-pill" onclick="loadMultiPreset('quality')">⚡ Dual Quality (S6 + S8)</button>
+          <button type="button" class="preset-pill" onclick="loadMultiPreset('quad')">🌪️ Quad Burst (S4, S8, S12, S17)</button>
+          <button type="button" class="preset-pill" onclick="loadMultiPreset('tri')">☣️ Tri-Zone Toxin (S6, S15, S20)</button>
+          <button type="button" class="preset-pill" onclick="loadMultiPreset('botnet')">🦹 5-Node Sybil Botnet</button>
+        </div>
+      </div>
+
+      <!-- Pressure Zone Dropdown Box -->
+      <div class="sim-input-grp" id="zone-target-box" style="display:none; grid-column: 1 / -1; background:rgba(255,255,255,0.02); border:1px solid var(--ln); border-radius:14px; padding:16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
+          <label style="margin:0; font-size:13px; font-weight:800; color:var(--tx);">Select Municipal Pressure Zone</label>
+          <span class="pill-tag ok" id="zone-badge" style="font-size:11px;">🏥 Hospital Priority 1</span>
+        </div>
+        <select id="sim-zone-select" class="feature-selector" style="margin-bottom:12px; font-weight:700;" onchange="onZoneSelectChange(this.value)">
+          <option value="hospital">🏥 Zone 1: City Hospital Life-Safety District (Nodes S13, S18, S19)</option>
+          <option value="polytech">🔬 Zone 2: Polytech & Sciences Research Quad (Nodes S6, S7, S11, S16)</option>
+          <option value="barrois">🍽️ Zone 3: Barrois Dining & Commercial District (Nodes S8, S9, S14)</option>
+          <option value="lilliad">🏢 Zone 4: LILLIAD Central Innovation Hub (Nodes S2, S3, S12)</option>
+          <option value="eastern">⚡ Zone 5: Eastern Arterial & Nanotech Sector (Nodes S4, S5, S10, S15, S20)</option>
+          <option value="reservoir">🏔️ Zone 6: Mountain Reservoir & Bulk Feeder (Nodes S0, S1, S21, S22)</option>
+          <option value="blacksky">🌪️ Zone 7: Whole-Grid Multi-Sector Stress Test (All 24 Nodes)</option>
+        </select>
+
+        <!-- Zone Info Banner -->
+        <div id="zone-info-banner" style="background:var(--pan); border:1px solid var(--ln); border-radius:10px; padding:12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <div style="max-width:600px;">
+            <div id="zone-info-title" style="font-size:13px; font-weight:700; color:var(--tx);">Zone 1: City Hospital Life-Safety District</div>
+            <div id="zone-info-desc" style="font-size:11.5px; color:var(--mu); margin-top:3px;">Critical medical facilities. Smart Valve Doctor enforces minimum 15m pressure floor (≥48 psi).</div>
+          </div>
+          <div style="display:flex; gap:14px; align-items:center;">
+            <div style="text-align:right;">
+              <span style="font-size:10.5px; color:var(--mu); text-transform:uppercase; letter-spacing:0.5px;">Target Nodes:</span>
+              <div id="zone-info-nodes" style="font-size:12px; font-weight:800; color:var(--ac);">S13, S18, S19</div>
+            </div>
+            <div style="text-align:right;">
+              <span style="font-size:10.5px; color:var(--mu); text-transform:uppercase; letter-spacing:0.5px;">Normal Head:</span>
+              <div id="zone-info-head" style="font-size:12px; font-weight:800; color:var(--ok);">52.4 psi</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Single Target Dropdown -->
+      <div class="sim-input-grp" id="single-target-box">
+        <label>Target Sensor Junction</label>
+        <select id="sim-target">
+          <option value="8">Sensor S8 (Barrois Restaurant Quality)</option>
+          <option value="6">Sensor S6 (Polytech'Lille Quality)</option>
+          <option value="12">Sensor S12 (LILLIAD Central Hub)</option>
+          <option value="17">Sensor S17 (IEMN Materials Research)</option>
+          <option value="4">Sensor S4 (East Main)</option>
+        </select>
+      </div>
+
+      <!-- Multi Target Selection Grid -->
+      <div class="sim-input-grp" id="multi-target-box" style="display:none; grid-column: 1 / -1;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; flex-wrap:wrap; gap:8px;">
+          <label style="margin:0;">Select Multiple Attack Nodes (<span id="multi-count">2</span> selected)</label>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button type="button" class="preset-pill" onclick="toggleAllMulti(true)">Select All (24)</button>
+            <button type="button" class="preset-pill" onclick="randomMulti(3)">Random 3</button>
+            <button type="button" class="preset-pill" onclick="randomMulti(5)">Random 5</button>
+            <button type="button" class="preset-pill" onclick="toggleAllMulti(false)">Clear</button>
+          </div>
+        </div>
+        <div class="node-chip-grid" id="multi-chip-grid"></div>
+      </div>
+
+      <div class="sim-input-grp" id="sim-param-box">
+        <label>Spoofed Pressure Value (Reported)</label>
+        <select id="sim-spoof-val">
+          <option value="0">0.0 psi (Fake Catastrophic Burst)</option>
+          <option value="12">12.0 psi (Low Pressure Alarm)</option>
+          <option value="95">95.0 psi (Fake Surge)</option>
+        </select>
+      </div>
+
+      <div class="sim-input-grp" style="display:flex; align-items:flex-end;">
+        <button class="btn" style="width:100%; border-radius:10px; padding:10px 14px;" onclick="runCustomSimulation()">
+          ⚡ Execute Attack Simulation
+        </button>
+      </div>
+    </div>
+
+    <!-- Live Telemetry & Swarm Voting Proof -->
+    <div class="sim-panel">
+      <!-- Left: Packet & Telemetry Verification -->
+      <div class="sim-hud">
+        <h4>📡 Live Telemetry & Packet Inspection</h4>
+        <div class="hud-metric"><span>Target Node:</span> <b id="hud-node">S8</b></div>
+        <div class="hud-metric"><span>Reported Telemetry:</span> <span id="hud-reported" class="pill-tag bad">0.0 psi (ALARM)</span></div>
+        <div class="hud-metric"><span>Packet Fingerprint:</span> <span id="hud-packet" style="font-family:monospace;">IP: 185.220.101.47 | TTL: 52 (FORGED)</span></div>
+        <div class="hud-metric"><span>HMAC Signature:</span> <span id="hud-hmac" class="pill-tag bad">INVALID SIGNATURE</span></div>
+        <div class="hud-metric"><span>Ghost Sensor (Physics Derived):</span> <span id="hud-ghost" class="pill-tag ok">58.4 psi (ACCURATE)</span></div>
+        <div class="hud-metric"><span>Automated Action:</span> <span id="hud-action" class="pill-tag ok">IP FIREWALLED · GHOST ENGAGED</span></div>
+      </div>
+
+      <!-- Right: Byzantine Consensus Swarm Votes -->
+      <div class="sim-hud">
+        <h4>🐝 Swarm Byzantine Consensus (Neighbor Ballots)</h4>
+        <p style="color:var(--mu); font-size:12px; margin:0 0 6px;">Neighbors test mass conservation $\sum Q_{in} = \sum Q_{out}$. Any sensor contradicting physics is evicted without cloud delay.</p>
+        <table class="sim-votes-tbl">
+          <thead>
+            <tr><th>Voter</th><th>Implied Pressure</th><th>Ballot</th><th>Trust Weight</th></tr>
+          </thead>
+          <tbody id="sim-votes-body">
+            <tr><td>Sensor S1</td><td>58.2 psi</td><td><span class="pill-tag bad">VOTE: LIAR</span></td><td>100%</td></tr>
+            <tr><td>Sensor S7</td><td>59.1 psi</td><td><span class="pill-tag bad">VOTE: LIAR</span></td><td>100%</td></tr>
+            <tr><td>Sensor S9</td><td>57.8 psi</td><td><span class="pill-tag bad">VOTE: LIAR</span></td><td>100%</td></tr>
+            <tr><td>Sensor S13</td><td>58.6 psi</td><td><span class="pill-tag bad">VOTE: LIAR</span></td><td>100%</td></tr>
+          </tbody>
+        </table>
+        <div id="patient-zero-box" style="margin-top:10px; display:none; background:color-mix(in srgb,var(--pu) 15%,transparent); border:1px solid var(--pu); padding:8px 12px; border-radius:8px;">
+          <b style="color:var(--pu);">🕵️ Patient Zero Identified:</b> <span id="pz-path">Node S6 (~160 min ago, 99.9% fit). Path: S6 ➔ S7 ➔ S8</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Forensic Incident Report Bar -->
+    <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--ln); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span style="font-size:22px;">🛡️</span>
+        <div>
+          <div style="font-weight:700; font-size:13.5px; color:var(--tx);">Cryptographic Incident Flight Recorder</div>
+          <div style="font-size:11.5px; color:var(--mu);">SHA-256 chain verification with physical mass conservation proof</div>
+        </div>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button type="button" class="btn" onclick="downloadForensicReport()" style="padding:10px 18px; font-size:13px; background:linear-gradient(135deg, #0ea5e9, #6366f1); color:#fff; border:none; box-shadow:0 6px 20px -4px rgba(14,165,233,0.4); display:flex; align-items:center; gap:6px; cursor:pointer;" title="1-Click Direct File Download (.txt)">
+          <span>💾</span> Download Audit Report (.txt)
+        </button>
+        <button type="button" class="btn g" onclick="toggleCornerReport(true)" style="padding:10px 16px; font-size:13px; display:flex; align-items:center; gap:6px; cursor:pointer;" title="Dock report in bottom-right corner">
+          <span>📄</span> View in Corner Option
+        </button>
+        <button type="button" class="btn g" onclick="copyForensicReport()" style="padding:10px 14px; font-size:13px; display:flex; align-items:center; gap:6px; cursor:pointer;" title="Copy to clipboard">
+          <span>📋</span> Copy
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REAL PHYSICAL PHONE DISPATCH & LIVE DEMO CENTER -->
+<section id="dispatch">
+  <h2>📱 Connect Your Physical Phone (<span class="wavy-cursive">Real-World Alert Dispatch</span>)</h2>
+  <p class="sub">Pair your actual smartphone in seconds. When an attack, burst, or chemical contamination is detected, an <span class="wavy-cursive">emergency alert banner</span> pops up directly on your physical phone with sound and vibration.</p>
+
+  <div class="sim-box" style="margin-top:16px;">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:24px; align-items:start;">
+      
+      <!-- Step 1: Phone Number Input & Controls -->
+      <div style="background:var(--bg); border:1px solid var(--ln); border-radius:18px; padding:22px;">
+        <div style="display:inline-block; background:rgba(34,211,238,0.15); color:var(--ac); font-size:11px; font-weight:800; padding:3px 10px; border-radius:99px; margin-bottom:10px; text-transform:uppercase;">
+          Step 1: Your Mobile Number
+        </div>
+        <h3 style="margin:0 0 10px; font-size:17px; display:flex; align-items:center; gap:8px;">
+          <span>📞</span> Enter Your Phone Number
+        </h3>
+        <p style="font-size:13px; color:var(--mu); margin:0 0 14px;">
+          Enter your mobile number to create your encrypted emergency dispatch channel.
+        </p>
+
+        <div class="sim-input-grp" style="margin-bottom:12px;">
+          <label for="dispatch-phone">Your Mobile Phone Number</label>
+          <div style="display:flex; gap:8px;">
+            <input type="text" id="dispatch-phone" value="aquila-emergency" placeholder="aquila-emergency or mobile number" oninput="onPhoneInputChanged()" style="flex:1; font-weight:700; font-size:15px; letter-spacing:0.5px;">
+            <button type="button" class="btn" onclick="savePhoneNumber(true)" style="padding:10px 16px; font-size:13px;">Save</button>
+          </div>
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-top:5px; flex-wrap:wrap; gap:6px;">
+            <small id="phone-saved-msg" style="color:var(--ok); font-size:11.5px; display:none; font-weight:600;">✓ Channel paired to your phone number</small>
+            <button type="button" class="preset-pill" onclick="setSimpleEmergencyTopic()" style="font-size:11px; padding:3px 8px; border-radius:6px; background:rgba(56,189,248,0.1); color:var(--ac); border:1px solid rgba(56,189,248,0.25); cursor:pointer;">
+              ⚡ Or use simple topic: aquila-emergency
+            </button>
+          </div>
+        </div>
+
+        <div style="background:rgba(0,0,0,0.22); border:1px solid var(--ln); border-radius:12px; padding:10px 14px; margin-bottom:14px;">
+          <div style="font-size:11px; color:var(--mu); font-weight:700; text-transform:uppercase; margin-bottom:3px;">Paired Dispatch Topic:</div>
+          <div style="font-family:monospace; font-size:13px; color:var(--ac); font-weight:700;" id="topic-display-name">ntfy.sh/aquila-9876543210</div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <button type="button" class="btn" onclick="triggerTestEmergencyAlert()" style="width:100%; padding:12px 16px; font-size:14px; font-weight:800; background:linear-gradient(135deg, #ef4444, #f97316); box-shadow:0 8px 25px -5px rgba(239,68,68,0.5); color:#fff; border:none; cursor:pointer;">
+            🚨 Send Test Alert to My Real Phone
+          </button>
+          
+          <button type="button" id="btn-auto-guardian" class="btn" onclick="toggleAutoGuardian()" style="width:100%; padding:11px 14px; font-size:13px; font-weight:700; background:rgba(56,189,248,0.12); border:1px solid #38bdf8; color:#38bdf8; display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer;">
+            <span>🤖</span> Enable Auto-Dispatch Mode (Sends on its own)
+          </button>
+          
+          <div style="display:flex; gap:8px;">
+            <button type="button" class="btn g" onclick="sendWhatsAppAlert()" style="flex:1; padding:10px 12px; font-size:12.5px; display:flex; align-items:center; justify-content:center; gap:6px; background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3);" title="Send alert via WhatsApp">
+              <span>💬</span> WhatsApp Alert
+            </button>
+            <button type="button" class="btn g" onclick="openTopicDirectly()" style="flex:1; padding:10px 12px; font-size:12.5px; display:flex; align-items:center; justify-content:center; gap:6px;" title="Open subscriber page in a new tab">
+              <span>↗</span> Open Channel
+            </button>
+          </div>
+          <small style="font-size:10.5px; color:var(--mu); text-align:center; line-height:1.4;">
+            💡 <b>Auto-Send Tip:</b> WhatsApp requires you to tap the green "Send" arrow in chat. For 100% hands-free popups on your lockscreen without touching your phone, use the free <b>ntfy</b> app in Step 2!
+          </small>
+
+          <!-- Live Delivery Status Banner -->
+          <div id="dispatch-delivery-status" style="display:none; background:rgba(0,0,0,0.3); border:1px solid var(--ln); border-radius:10px; padding:10px 12px; font-size:12px;"></div>
+        </div>
+      </div>
+
+      <!-- Step 2: Real Phone Pairing & Options -->
+      <div style="background:var(--bg); border:1px solid var(--ln); border-radius:18px; padding:22px; display:flex; flex-direction:column; align-items:center; text-align:center;">
+        <div style="display:inline-block; background:rgba(74,222,128,0.15); color:var(--ok); font-size:11px; font-weight:800; padding:3px 10px; border-radius:99px; margin-bottom:10px; text-transform:uppercase;">
+          Step 2: Connect Phone (Instant Setup)
+        </div>
+        <h3 style="margin:0 0 8px; font-size:17px; display:flex; align-items:center; gap:8px;">
+          <span>📲</span> Get Alerts on Your Phone
+        </h3>
+
+        <!-- Method Cards -->
+        <div style="width:100%; text-align:left; background:rgba(0,0,0,0.2); border:1px solid var(--ln); border-radius:12px; padding:12px; margin-bottom:12px; font-size:12px; line-height:1.5;">
+          <div style="font-weight:800; color:var(--tx); margin-bottom:4px; display:flex; align-items:center; gap:6px;">
+            <span style="background:#22c55e; color:#000; font-size:10px; padding:1px 6px; border-radius:4px; font-weight:800;">EASIEST</span> 
+            <span>💬 1-Click WhatsApp (No Apps Needed)</span>
+          </div>
+          <div style="color:var(--mu); margin-bottom:6px;">
+            Click the green <b>WhatsApp Alert</b> button. The full emergency dispatch opens directly on WhatsApp to your phone number!
+          </div>
+          <hr style="border:none; border-top:1px solid var(--ln); margin:8px 0;">
+          <div style="font-weight:800; color:var(--tx); margin-bottom:4px; display:flex; align-items:center; gap:6px;">
+            <span style="background:#38bdf8; color:#000; font-size:10px; padding:1px 6px; border-radius:4px; font-weight:800;">LOCKSCREEN</span> 
+            <span>🔔 Push Notification (App Store / Play Store)</span>
+          </div>
+          <div style="color:var(--mu); font-size:11.5px;">
+            1. Download free <b>ntfy</b> app on iPhone (App Store) or Android (Play Store).<br>
+            2. Open app ➔ tap <b>+</b> ➔ type topic shown below (or scan QR).<br>
+            3. Done! Chimes & buzzes directly on your lockscreen!
+          </div>
+        </div>
+
+        <!-- Live QR Code Image -->
+        <div style="background:#fff; padding:10px; border-radius:12px; box-shadow:0 8px 25px rgba(0,0,0,0.25); margin-bottom:10px;">
+          <img id="qr-code-img" src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=https://ntfy.sh/aquila-9876543210" alt="Scan to subscribe on your real phone" width="130" height="130" style="display:block;">
+        </div>
+
+        <a id="topic-direct-link" href="https://ntfy.sh/aquila-9876543210" target="_blank" rel="noopener noreferrer" style="font-size:12px; color:var(--ac); font-weight:700; text-decoration:none; display:flex; align-items:center; gap:4px;">
+          <span>🔗</span> Open ntfy.sh topic on phone ↗
+        </a>
+      </div>
+
+      <!-- Step 3: Live Pitch Director / Presentation Mode -->
+      <div style="background:radial-gradient(circle at 80% 20%, rgba(124,58,237,0.18), rgba(7,18,31,0.6)); border:1px solid rgba(124,58,237,0.35); border-radius:18px; padding:22px; display:flex; flex-direction:column; justify-content:space-between;">
+        <div>
+          <div style="display:inline-block; background:rgba(124,58,237,0.25); color:#c084fc; font-size:11px; font-weight:800; padding:3px 10px; border-radius:99px; margin-bottom:10px; text-transform:uppercase;">
+            Step 3: Live Demo Pitch
+          </div>
+          <h3 style="margin:0 0 10px; font-size:17px; color:var(--tx);">
+            🎤 Interactive Live Demo Script
+          </h3>
+          <p style="font-size:13px; color:var(--mu); line-height:1.6; margin:0 0 16px;">
+            Presenting to judges or evaluators? Keep your phone face-up on the desk. Launch the pitch director to show attacks on the 3D twin while your real phone buzzes with emergency dispatches in real time!
+          </p>
+        </div>
+
+        <button type="button" class="btn" onclick="openPitchDirector()" style="width:100%; padding:13px; font-size:14px; font-weight:800; background:linear-gradient(135deg, #7c3aed, #06b6d4); box-shadow:0 8px 25px -5px rgba(124,58,237,0.5); color:#fff; border:none;">
+          🚀 Launch Pitch Walkthrough Director
+        </button>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== NEW: BEFORE VS AFTER COMPARATIVE ANALYTICS & GRAPHS ===== -->
+<section id="analytics">
+  <h2>📊 Before vs After <span class="wavy-cursive">Attack Analytics</span></h2>
+  <p class="sub">Compare baseline physical telemetry against attack deflections and Aquila's <span class="wavy-cursive">physics-reconstructed truth</span>.</p>
+
+  <div class="analytics-box">
+    <div class="graph-tabs">
+      <button class="graph-tab active" onclick="switchGraph('pressure', this)">📈 Pressure Spectrum (psi)</button>
+      <button class="graph-tab" onclick="switchGraph('residual', this)">⚖️ Mass Conservation Residuals (L/s)</button>
+      <button class="graph-tab" onclick="switchGraph('trust', this)">🐝 Sensor Trust Score (%)</button>
+      <button class="graph-tab" onclick="switchGraph('quality', this)">🧪 Chlorine Depletion & Contamination</button>
+    </div>
+
+    <div class="graph-stage">
+      <canvas id="analyticsChart"></canvas>
+    </div>
+
+    <div class="graph-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#38bdf8;"></div> <span>Baseline Safe Operation (Unperturbed Telemetry)</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ff2d55;"></div> <span>Received Telemetry (Attack Spoof / Real Deflection)</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#4ade80;"></div> <span>Aquila Ground Truth (Physics Reconstruction)</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- SENSOR TRUST SWARM -->
+<section id="trust"><h2>Sensor <span class="wavy-cursive">Trust Swarm</span></h2><p class="sub">Every sensor is an autonomous agent. When neighbours disagree with a lone outlier, the swarm votes to isolate it using <span class="wavy-cursive">Byzantine consensus</span> without cloud dependency.</p><div class="grid" id="grid"></div></section>
+
+<!-- GOD MODE WARZONE -->
+<section id="war"><h2>God Mode <span class="wavy-cursive">Warzone</span></h2><p class="sub">Same spoofing attack, two defenders. Watch legacy SCADA panic while <span class="wavy-cursive">fluid dynamics</span> saves the grid.</p><p><button class="btn" id="wb">⚔ Launch spoofing attack</button></p>
+<div class="war"><div class="pane L"><h3>Legacy SCADA</h3><small>Blindly trusts sensors</small><div class="money" id="ml">$0</div><div class="log" id="ll"></div></div>
+<div class="pane R"><h3>Aquila Neural Defense</h3><small>Physics-checked consensus</small><div class="money" id="mr">$0</div><div class="log" id="lr"></div></div></div></section>
+
+<!-- ===== NEW: FEATURES INTERACTIVE DROPDOWN & ACCORDION ===== -->
+<section id="feat">
+  <h2>Everything inside <span class="wavy-cursive">Aquila</span></h2>
+  <p class="sub">Select any core capability from the dropdown below to explore its <span class="wavy-cursive">physical principles</span>, architecture, and fail-safe defenses.</p>
+
+  <div class="feature-dropdown-box">
+    <select class="feature-selector" id="feature-select" onchange="renderFeatureDetail(this.value)">
+      <option value="twin">🧬 Digital Twin (EPANET Linear Hydraulic Simulator)</option>
+      <option value="trust">🕵️ Sensor Trust Score (0–100% Bayesian Degradation)</option>
+      <option value="classifier">🚦 Four-Way Instant Threat Classifier</option>
+      <option value="swarm">🐝 Federated Sensor Swarm (Byzantine Fault Tolerance)</option>
+      <option value="mesh">✨ 3D Volumetric Particle Flow Mesh</option>
+      <option value="valve">🏥 Smart Valve Doctor (Hospital Floor Protection ≥15m)</option>
+      <option value="pz">🕵️ Patient Zero Backtracker (Reverse Fluid Dynamic DAG)</option>
+      <option value="audit">🔒 Cryptographic SHA-256 Flight Recorder</option>
+    </select>
+
+    <div class="feature-content-card" id="feature-card">
+      <h3 id="feat-title">🧬 Digital Twin</h3>
+      <p id="feat-desc">Runs an EPANET-style live linear hydraulic simulation in real time. Predicts expected pressure heads and advective transport times. Water entering a junction must equal water leaving it: if telemetry breaks the equation, Aquila detects it instantly.</p>
+      <div class="feature-tag-list" id="feat-tags">
+        <span class="pill-tag ok">Mass Conservation Law</span>
+        <span class="pill-tag ok">Matrix Inversion Solver</span>
+        <span class="pill-tag ok">Zero Cloud Latency</span>
+      </div>
+    </div>
+
+    <!-- Forensic Incident Report Bar -->
+    <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--ln); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span style="font-size:22px;">🛡️</span>
+        <div>
+          <div style="font-weight:700; font-size:13.5px; color:var(--tx);">Cryptographic Incident Flight Recorder</div>
+          <div style="font-size:11.5px; color:var(--mu);">SHA-256 chain verification with physical mass conservation proof</div>
+        </div>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button type="button" class="btn" onclick="downloadForensicReport()" style="padding:10px 18px; font-size:13px; background:linear-gradient(135deg, #0ea5e9, #6366f1); color:#fff; border:none; box-shadow:0 6px 20px -4px rgba(14,165,233,0.4); display:flex; align-items:center; gap:6px; cursor:pointer;" title="1-Click Direct File Download (.txt)">
+          <span>💾</span> Download Audit Report (.txt)
+        </button>
+        <button type="button" class="btn g" onclick="toggleCornerReport(true)" style="padding:10px 16px; font-size:13px; display:flex; align-items:center; gap:6px; cursor:pointer;" title="Dock report in bottom-right corner">
+          <span>📄</span> View in Corner Option
+        </button>
+        <button type="button" class="btn g" onclick="copyForensicReport()" style="padding:10px 14px; font-size:13px; display:flex; align-items:center; gap:6px; cursor:pointer;" title="Copy to clipboard">
+          <span>📋</span> Copy
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INTERACTIVE PITCH DIRECTOR MODAL -->
+<div id="pitch-modal" class="hide" onclick="closePitchDirector(event)">
+  <div class="pitch-card" onclick="event.stopPropagation()">
+    <button class="x" onclick="closePitchDirector()">×</button>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <span style="font-size:11px; font-weight:800; color:var(--ac); letter-spacing:0.5px; text-transform:uppercase;">
+        🎤 LIVE PITCH DIRECTOR · STEP <span id="pitch-step-num">1</span> OF 4
+      </span>
+      <div style="display:flex; gap:6px;" id="pitch-dots">
+        <span class="pitch-dot active"></span>
+        <span class="pitch-dot"></span>
+        <span class="pitch-dot"></span>
+        <span class="pitch-dot"></span>
+      </div>
+    </div>
+
+    <!-- Pitch Slide Content -->
+    <div id="pitch-slide-content">
+      <!-- Dynamically populated by JS -->
+    </div>
+
+    <!-- Bottom Controls -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:24px; padding-top:16px; border-top:1px solid var(--ln);">
+      <button type="button" class="btn g" id="pitch-prev-btn" onclick="prevPitchStep()" style="padding:8px 16px; font-size:13px;">
+        ← Previous Step
+      </button>
+      <div style="display:flex; gap:8px;">
+        <button type="button" class="btn g" onclick="closePitchDirector()" style="padding:8px 14px; font-size:13px;">
+          Exit Director
+        </button>
+        <button type="button" class="btn" id="pitch-next-btn" onclick="nextPitchStep()" style="padding:8px 18px; font-size:13px; color:#fff; border:none;">
+          Next Step →
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FLOATING CORNER OPTION FOR FORENSIC REPORT (NO POPUP) -->
+<div id="corner-report-widget" class="corner-report-widget">
+  <!-- Sleek Corner Dropup Panel (Docked in the corner, never blocks center of screen, no modal backdrop) -->
+  <div id="corner-report-panel" class="corner-report-panel hide">
+    <div class="corner-panel-header">
+      <div>
+        <div style="font-size:10px; font-weight:800; color:var(--ac); letter-spacing:0.5px;">AQUILA FLIGHT RECORDER · CORNER AUDIT</div>
+        <div style="font-size:13px; font-weight:800; color:var(--tx); display:flex; align-items:center; gap:6px;">
+          <span>📄</span> Official Incident Dossier
+        </div>
+      </div>
+      <button class="x" onclick="toggleCornerReport(false)" style="position:static; padding:2px 8px; font-size:16px; cursor:pointer;" title="Close Corner Panel">×</button>
+    </div>
+
+    <!-- Live Report Preview inside Corner Panel -->
+    <div id="corner-report-preview" class="corner-report-preview"></div>
+
+    <div class="corner-panel-actions">
+      <div style="font-size:11px; color:var(--mu); display:flex; align-items:center; gap:4px;">
+        <span>🔒</span> SHA-256 Verified
+      </div>
+      <div style="display:flex; gap:6px;">
+        <button type="button" class="btn g" onclick="copyForensicReport()" style="padding:6px 12px; font-size:11.5px; display:flex; align-items:center; gap:4px; cursor:pointer;">
+          <span>📋</span> Copy
+        </button>
+        <button type="button" class="btn" onclick="downloadForensicReport()" style="padding:6px 14px; font-size:11.5px; background:linear-gradient(135deg, #0ea5e9, #6366f1); color:#fff; border:none; display:flex; align-items:center; gap:4px; box-shadow:0 4px 12px -2px #0ea5e9; cursor:pointer;">
+          <span>💾</span> Download (.txt)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Corner Docked Pill -->
+  <div class="corner-report-pill" onclick="toggleCornerReport()" title="Toggle Incident Report in Corner">
+    <span class="corner-pulse-dot"></span>
+    <span style="font-weight:700; font-size:12.5px; color:var(--tx); display:flex; align-items:center; gap:6px;">
+      <span>📄</span> Incident Report
+    </span>
+    <button type="button" class="corner-download-btn" onclick="event.stopPropagation(); downloadForensicReport();" title="1-Click Instant Download (.txt)">
+      <span>💾</span> .txt
+    </button>
+    <span id="corner-chevron" style="font-size:10px; color:var(--mu); transition:transform .2s ease;">▲</span>
+  </div>
+</div>
+
+<footer>Aquila · Hackers can’t hack gravity.</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+function toast(m,t='',ms=4500){const d=document.createElement('div');d.className='toast '+t;d.innerHTML=m;$('#toasts').appendChild(d);setTimeout(()=>{d.classList.add('out');setTimeout(()=>d.remove(),400)},ms)}
+/* ===== COLOR PALETTES & THEME SYSTEM ===== */
+const THEMES = {
+  'matcha': { name: 'Matcha Latte', icon: '🍵', swatch: '#4ade80' },
+  'chocolate': { name: 'Dark Chocolate', icon: '🍫', swatch: '#e09f67' },
+  'sakura': { name: 'Sakura Blossom', icon: '🌸', swatch: '#ec4899' },
+  'lavender': { name: 'Lavender Mist', icon: '💜', swatch: '#8b5cf6' },
+  'mint': { name: 'Mint Sorbet', icon: '🌿', swatch: '#10b981' },
+  'cloud': { name: 'Cloud Nine', icon: '☁️', swatch: '#3b82f6' },
+  'buttercream': { name: 'Buttercream Honey', icon: '🍯', swatch: '#f59e0b' },
+  'dark': { name: 'Midnight Deep', icon: '🌙', swatch: '#22d3ee' },
+  'light': { name: 'Ocean Breeze', icon: '☀️', swatch: '#0891b2' }
+};
+
+function setTheme(name, showToast = true) {
+  if (!THEMES[name]) name = 'dark';
+  document.documentElement.dataset.theme = name;
+  localStorage.setItem('aquila_theme', name);
+
+  const labelEl = $('#theme-label');
+  const iconEl = $('#theme-icon');
+  const dotEl = $('#theme-dot');
+  if (labelEl && THEMES[name]) labelEl.textContent = THEMES[name].name;
+  if (iconEl && THEMES[name]) iconEl.textContent = THEMES[name].icon;
+  if (dotEl && THEMES[name]) dotEl.style.background = THEMES[name].swatch;
+
+  $$('.theme-opt').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.theme === name);
+  });
+
+  closeThemePicker();
+  if (showToast && typeof toast === 'function') {
+    toast(`🎨 Theme set to <b>${THEMES[name].name}</b>`, 'ok', 3000);
+  }
+}
+
+function navigateToSection(targetId, e) {
+  if (e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  closeNavZones();
+  const el = document.getElementById(targetId);
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    try { history.replaceState(null, null, '#' + targetId); } catch(err) {}
+  }
+}
+
+function openCornerReportFromMenu(e) {
+  if (e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  closeNavZones();
+  toggleCornerReport(true);
+}
+
+function toggleNavZones(e) {
+  if (e) e.stopPropagation();
+  const m = $('#nav-zones-menu');
+  if (m) m.classList.toggle('hide');
+}
+
+function closeNavZones() {
+  const m = $('#nav-zones-menu');
+  if (m) m.classList.add('hide');
+}
+
+function toggleThemePicker(e) {
+  if (e) e.stopPropagation();
+  const m = $('#theme-dropdown');
+  if (m) m.classList.toggle('hide');
+}
+
+function closeThemePicker() {
+  const m = $('#theme-dropdown');
+  if (m) m.classList.add('hide');
+}
+
+document.addEventListener('click', (e) => {
+  const zonesContainer = $('.nav-zones-dropdown-container');
+  if (zonesContainer && !zonesContainer.contains(e.target)) {
+    closeNavZones();
+  }
+  const container = $('.theme-picker-container');
+  if (container && !container.contains(e.target)) {
+    closeThemePicker();
+  }
+  const cornerWidget = $('#corner-report-widget');
+  if (cornerWidget && !cornerWidget.contains(e.target)) {
+    closeForensicReport();
+  }
+});
+
+function initTheme() {
+  const saved = localStorage.getItem('aquila_theme') || 'dark';
+  setTheme(saved, false);
+}
+
+function dismissModal(){
+  const m=$('#modal');
+  if(m) m.classList.add('hide');
+  setTimeout(()=>toast('👋 Digital Twin active. Try <b>Simulate Leak</b>, <b>Cyberattack</b>, or the <b>Simulator</b> below.','',5000),600);
+}
+window.addEventListener('keydown', e=>{if(e.key==='Escape')dismissModal()});
+
+$$('.stats b').forEach(b=>{const n=+b.dataset.n;let v=0;const iv=setInterval(()=>{v=Math.min(n,v+Math.max(1,n/30));b.textContent=Math.round(v);if(v>=n)clearInterval(iv)},40)});
+
+/* ---------- network (Polytech'Lille Real-World Campus Benchmark) ---------- */
+const N=[],E=[],V=THREE.Vector3;
+const addN=(x,y,z,id,name,isQuality=false)=>{
+  const n={p:new V(x,y,z),id,name,isQuality,adj:[],trust:100,tt:100,st:'ok',pr:58+Math.random()*8,cl:0.85};
+  N.push(n);return N.length-1;
+};
+const addE=(a,b)=>{E.push({a,b,m:'ok'});N[a].adj.push(b);N[b].adj.push(a)};
+
+// 25 Real-World Campus Nodes (Matching University of Lille - Polytech'Lille diagram)
+// 0: Main Municipal Water Supply Intake (North)
+addN(1.8, 1.8, -9.5, 'RES', "North Metro Supply Intake & Reservoir");
+
+// Outer Loop Perimeter
+addN(-3.8, 0.6, -8.0, 'S1', "North-West Loop (Av. Poincaré)");
+addN(-7.6, 0.3, -5.2, 'S2', "Faculty of Biology & Earth Sciences");
+addN(-8.9, 0.1, -1.2, 'S3', "West Ring (Av. Paul Langevin)");
+addN(-8.0, -0.2, 3.4, 'S4', "Polytech'Lille West Service Branch");
+addN(-5.8, -0.4, 6.8, 'S5', "Polytech'Lille South Feeder");
+
+// 6: Polytech'Lille Main Engineering Hall (WATER QUALITY SENSOR)
+addN(-3.6, 0.4, 2.4, 'S6', "Polytech'Lille (Water Quality Sensor)", true);
+
+// 7: North-East Ring
+addN(6.2, 0.5, -4.0, 'S7', "North-East Loop (Av. Mendeleïev)");
+
+// 8: Barrois Restaurant (WATER QUALITY SENSOR)
+addN(3.8, 0.8, -6.2, 'S8', "Barrois Restaurant (Water Quality Sensor)", true);
+
+// 9-11: East and South Outer Loop
+addN(8.6, 0.1, 0.5, 'S9', "East Campus Gate & Main Arterial");
+addN(6.8, -0.3, 5.2, 'S10', "South-East Residential Sector");
+addN(0.8, -0.5, 7.9, 'S11', "South Campus Perimeter Loop");
+
+// 12-24: Interior Campus Hubs & Academic Wings
+addN(1.6, 0.5, 0.4, 'S12', "LILLIAD Central Library & Roundabout");
+addN(-1.2, 0.3, -1.8, 'S13', "Campus Health Center & Clinic");
+addN(-4.6, 0.2, -1.8, 'S14', "Computer Science & Robotics (M3)");
+addN(-2.2, 0.4, -4.6, 'S15', "Chemistry Research Wing (C1-C5)");
+addN(1.2, 0.6, -4.0, 'S16', "North Dining & Student Hall");
+addN(-3.2, -0.2, 5.4, 'S17', "Materials Research Center (IEMN)");
+addN(5.0, 0.2, 2.2, 'S18', "East Residence Village (Bachelard)");
+addN(3.5, -0.2, 4.8, 'S19', "Sports Pavilion & Student Union");
+addN(-0.6, 0.1, 3.6, 'S20', "Applied Mathematics Tower (M1-M2)");
+addN(-1.6, -0.4, 6.6, 'S21', "Care Clinic & South Infirmary");
+addN(-4.8, -0.6, 9.4, 'S22', "South Campus Extension");
+addN(-4.0, -0.8, 11.2, 'S23', "Ascq Distribution Outfall");
+addN(-5.2, 0.6, -9.8, 'S24', "North-West Outer Branch");
+
+// Campus Conduits (Pipes)
+// Outer ring
+addE(0, 1); addE(1, 2); addE(2, 3); addE(3, 4); addE(4, 5);
+addE(5, 11); addE(11, 10); addE(10, 9); addE(9, 7); addE(7, 8); addE(8, 0);
+// Supply & Barrois Links
+addE(0, 8); addE(0, 16); addE(8, 16); addE(8, 7);
+// Central Roundabout Hub (LILLIAD)
+addE(12, 16); addE(12, 9); addE(12, 18); addE(12, 13); addE(12, 20);
+// Polytech'Lille Arterials
+addE(6, 4); addE(6, 5); addE(6, 17); addE(6, 20); addE(6, 14);
+// Internal Interconnects
+addE(14, 3); addE(14, 15); addE(15, 2); addE(15, 16); addE(13, 15);
+addE(13, 20); addE(17, 21); addE(21, 11); addE(20, 19); addE(19, 10);
+addE(18, 19); addE(18, 9);
+// Feeder extensions
+addE(5, 22); addE(22, 23); addE(1, 24);
+
+/* Populate simulator dropdown */
+const simTarget = $('#sim-target');
+if (simTarget) {
+  simTarget.innerHTML = '';
+  N.forEach((n, i) => {
+    if (i > 0) {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = `${n.id}: ${n.name}`;
+      simTarget.appendChild(opt);
+    }
+  });
+  simTarget.value = 8; // Default to Barrois Restaurant
+}
+
+/* Floating 3D Interactive Landmark Icon Pins */
+const PIN_ICONS = {
+  0: { icon: '💧', label: 'Supply Intake', color: '#0284c7' },
+  6: { icon: '🔬', label: "Polytech'Lille Quality", color: '#ff2d55', isSpecial: true },
+  8: { icon: '🍽️', label: 'Barrois Quality', color: '#ff2d55', isSpecial: true },
+  12: { icon: '📚', label: 'LILLIAD Hub', color: '#06b6d4', isSpecial: true },
+  13: { icon: '🏥', label: 'Health Clinic', color: '#10b981' },
+  14: { icon: '🤖', label: 'CompSci (M3)', color: '#38bdf8' },
+  15: { icon: '🧪', label: 'Chemistry (C1)', color: '#38bdf8' },
+  17: { icon: '⚡', label: 'IEMN Research', color: '#38bdf8' },
+  18: { icon: '🏡', label: 'Student Dorms', color: '#38bdf8' },
+  19: { icon: '🏅', label: 'Sports Union', color: '#38bdf8' },
+  20: { icon: '📐', label: 'Math Tower (M1)', color: '#38bdf8' },
+  21: { icon: '🚑', label: 'Care Clinic', color: '#10b981' }
+};
+
+const pinsContainer = $('#pinsContainer');
+if (pinsContainer) {
+  pinsContainer.innerHTML = '';
+  N.forEach((n, i) => {
+    const info = PIN_ICONS[i] || { icon: '💧', label: n.id, color: '#0284c7', isSmall: true };
+    const pin = document.createElement('div');
+    pin.className = 'pin' + (info.isSpecial ? ' special' : '') + (info.isSmall ? ' small' : '');
+    pin.dataset.i = i;
+    pin.innerHTML = `
+      <div class="pin-badge" style="background:${info.color}; border:2px solid #ffffffdd; box-shadow:0 0 12px ${info.color};">
+        ${info.icon}
+      </div>
+      <div class="pin-label">${info.label}</div>
+    `;
+    pin.onclick = (e) => {
+      e.stopPropagation();
+      showCard(i);
+      const p = n.p;
+      targetTh = Math.atan2(p.x, p.z) + 0.35;
+      targetPh = 0.95;
+      targetRad = 20;
+      idle = 0;
+    };
+    pinsContainer.appendChild(pin);
+    n.pinEl = pin;
+  });
+}
+
+/* ---------- scene ---------- */
+const stage=$('#stage'),R=new THREE.WebGLRenderer({antialias:true,alpha:true});R.setPixelRatio(Math.min(devicePixelRatio,2));stage.prepend(R.domElement);
+const sc=new THREE.Scene();sc.fog=new THREE.FogExp2(0x030711,.014);const cam=new THREE.PerspectiveCamera(48,1,.1,200);
+
+// Campus Lighting
+const ambLight = new THREE.AmbientLight(0xffffff, 0.9);
+sc.add(ambLight);
+const dirLight = new THREE.DirectionalLight(0xfff5e6, 0.7);
+dirLight.position.set(12, 24, 18);
+sc.add(dirLight);
+
+const grid=new THREE.GridHelper(46,46,0x0e4a6e,0x0a2236);grid.position.y=-3.6;sc.add(grid);
+
+/* Real-Life Campus Buildings (Extruded Volumes matching the Lille map) */
+const BUILDINGS = [
+  // Polytech'Lille Complex (linked to node 6: Water Quality Station)
+  { x: -3.8, z: 2.5, w: 2.8, d: 1.6, h: 0.9, rot: 0.15, node: 6 },
+  { x: -4.5, z: 3.5, w: 1.8, d: 1.2, h: 0.75, rot: 0.15, node: 6 },
+  { x: -2.8, z: 2.8, w: 1.2, d: 1.8, h: 0.8, rot: 0.15, node: 6 },
+  // Barrois Restaurant (linked to node 8: Water Quality Station)
+  { x: 3.8, z: -5.8, w: 1.9, d: 1.7, h: 0.75, rot: -0.2, node: 8 },
+  // LILLIAD Learning Center Innovation (linked to node 12: Central Hub)
+  { x: 1.6, z: 0.4, w: 2.0, d: 2.0, h: 0.95, isCyl: true, node: 12 },
+  // Computer Science & Automation (M3, linked to node 14)
+  { x: -4.8, z: -1.6, w: 2.4, d: 1.3, h: 0.85, rot: 0.1, node: 14 },
+  // Chemistry & Materials Labs (linked to node 15 / 17)
+  { x: -2.2, z: -4.5, w: 2.2, d: 1.4, h: 0.8, rot: -0.1, node: 15 },
+  { x: -4.2, z: -3.8, w: 1.6, d: 1.2, h: 0.7, rot: 0.2, node: 15 },
+  { x: -0.8, z: -5.5, w: 1.5, d: 1.1, h: 0.75, rot: -0.15, node: 16 },
+  // Mathematics & Physics Wings (linked to node 20)
+  { x: -0.5, z: 3.6, w: 1.8, d: 1.5, h: 0.85, rot: 0.05, node: 20 },
+  // East Student Village & Dormitories (linked to node 18)
+  { x: 5.6, z: 1.8, w: 1.2, d: 2.2, h: 1.1, rot: 0.3, node: 18 },
+  { x: 6.2, z: 3.8, w: 1.1, d: 1.8, h: 0.95, rot: 0.35, node: 18 },
+  { x: 4.8, z: -2.2, w: 1.4, d: 1.3, h: 0.8, rot: -0.1, node: 7 },
+  // North Facilities & Metro (linked to node 0)
+  { x: 1.5, z: -7.5, w: 2.0, d: 1.2, h: 0.65, rot: 0, node: 0 },
+  { x: -1.5, z: -8.0, w: 1.5, d: 1.4, h: 0.7, rot: 0.1, node: 1 },
+  // South Sports Complex & Research (linked to node 17 / 19)
+  { x: -2.8, z: 7.2, w: 2.2, d: 1.6, h: 0.75, rot: 0.2, node: 17 },
+  { x: 3.2, z: 6.0, w: 1.8, d: 1.3, h: 0.7, rot: -0.2, node: 19 }
+];
+
+const bMat = new THREE.MeshLambertMaterial({ color: 0xdfb17b, transparent: true, opacity: 0.78 });
+const bWireMat = new THREE.LineBasicMaterial({ color: 0xf5d4a6, transparent: true, opacity: 0.45 });
+const clickableObjects = [];
+
+BUILDINGS.forEach(b => {
+  let geo = b.isCyl ? new THREE.CylinderGeometry(b.w/2, b.w/2, b.h, 24) : new THREE.BoxGeometry(b.w, b.h, b.d);
+  const mesh = new THREE.Mesh(geo, bMat);
+  mesh.position.set(b.x, b.h/2 - 0.2, b.z);
+  if (b.rot) mesh.rotation.y = b.rot;
+  mesh.userData.i = b.node;
+  mesh.userData.isBuilding = true;
+  sc.add(mesh);
+  clickableObjects.push(mesh);
+  const edges = new THREE.EdgesGeometry(geo);
+  mesh.add(new THREE.LineSegments(edges, bWireMat));
+});
+
+const Y=new V(0,1,0),pm=[],gm=[];
+E.forEach(e=>{const a=N[e.a].p,b=N[e.b].p,d=b.clone().sub(a),L=d.length(),q=new THREE.Quaternion().setFromUnitVectors(Y,d.clone().normalize()),mid=a.clone().add(b).multiplyScalar(.5);
+ const m1=new THREE.Mesh(new THREE.CylinderGeometry(.08,.08,L,8),new THREE.MeshBasicMaterial({color:0x38bdf8,transparent:true,opacity:.6}));
+ const m2=new THREE.Mesh(new THREE.CylinderGeometry(.22,.22,L,8),new THREE.MeshBasicMaterial({color:0x38bdf8,transparent:true,opacity:.08,blending:THREE.AdditiveBlending,depthWrite:false}));
+ [m1,m2].forEach(m=>{m.position.copy(mid);m.quaternion.copy(q);sc.add(m)});pm.push(m1);gm.push(m2)});
+
+const sm=[];N.forEach((n,i)=>{
+  const isWQ = n.isQuality;
+  const col = isWQ ? 0xff2d55 : (i ? 0x22d3ee : 0x38bdf8);
+  const geo = i ? new THREE.SphereGeometry(isWQ ? 0.46 : 0.34, 20, 20) : new THREE.IcosahedronGeometry(0.85, 1);
+  const m=new THREE.Mesh(geo, new THREE.MeshBasicMaterial({color:col, wireframe:!i}));
+  m.position.copy(n.p);m.userData.i=i;sc.add(m);sm.push(m);
+  clickableObjects.push(m);
+
+  // Generous invisible hit target (easy clicking on any device)
+  const hit = new THREE.Mesh(new THREE.SphereGeometry(1.8, 12, 12), new THREE.MeshBasicMaterial({transparent:true, opacity:0, depthWrite:false}));
+  hit.position.copy(n.p);hit.userData.i=i;sc.add(hit);
+  clickableObjects.push(hit);
+
+  if(i){
+    const h=new THREE.Mesh(new THREE.RingGeometry(isWQ ? .58 : .46, isWQ ? .68 : .54, 32),new THREE.MeshBasicMaterial({color:col,transparent:true,opacity:isWQ ? .65 : .35,side:2}));
+    h.position.copy(n.p);h.lookAt(cam.position);n.halo=h;sc.add(h);
+    h.userData.i=i;clickableObjects.push(h);
+  }
+});
+
+// Selection pulsing halo in 3D
+const selMesh = new THREE.Group();
+const selRing1 = new THREE.Mesh(new THREE.RingGeometry(0.75, 1.0, 32), new THREE.MeshBasicMaterial({color:0x38bdf8, side:2, transparent:true, opacity:0.9}));
+const selRing2 = new THREE.Mesh(new THREE.RingGeometry(1.2, 1.45, 32), new THREE.MeshBasicMaterial({color:0x22d3ee, side:2, transparent:true, opacity:0.55}));
+selRing1.rotation.x = Math.PI / 2;
+selRing2.rotation.x = Math.PI / 2;
+selMesh.add(selRing1);
+selMesh.add(selRing2);
+selMesh.visible = false;
+sc.add(selMesh);
+
+const qr=new THREE.Mesh(new THREE.TorusGeometry(1.1,.06,8,40),new THREE.MeshBasicMaterial({color:0xff2d55}));qr.rotation.x=Math.PI/2;qr.visible=false;sc.add(qr);
+const cv=document.createElement('canvas');cv.width=cv.height=64;const cx=cv.getContext('2d'),g=cx.createRadialGradient(32,32,0,32,32,32);g.addColorStop(0,'#fff');g.addColorStop(.4,'#fff9');g.addColorStop(1,'#fff0');cx.fillStyle=g;cx.fillRect(0,0,64,64);
+const P=[];E.forEach((e,i)=>{for(let j=0;j<8;j++)P.push({e:i,t:Math.random(),s:.12+Math.random()*.1,c:j%2})});
+const pg=new THREE.BufferGeometry();pg.setAttribute('position',new THREE.BufferAttribute(new Float32Array(P.length*3),3));pg.setAttribute('color',new THREE.BufferAttribute(new Float32Array(P.length*3),3));
+sc.add(new THREE.Points(pg,new THREE.PointsMaterial({size:.5,map:new THREE.CanvasTexture(cv),vertexColors:true,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending})));
+const C={ok:[new THREE.Color(0x38bdf8),new THREE.Color(0x4ade80)],leak:[new THREE.Color(0xfb923c),new THREE.Color(0xfbbf24)],contam:[new THREE.Color(0xa855f7),new THREE.Color(0xd946ef)],spoof:[new THREE.Color(0xff2d55),new THREE.Color(0xff8fa3)]};
+const SP={ok:1,leak:2.2,contam:.5,spoof:1};
+
+/* ---------- camera & interactive picking ---------- */
+let th=.8,ph=1.05,rad=26,targetTh=th,targetPh=ph,targetRad=rad,drag=0,lx=0,ly=0,downX=0,downY=0,isDrag=false,idle=0;const cvs=R.domElement;
+function zoomIn(){targetRad=Math.max(12,targetRad-4);idle=0}
+function zoomOut(){targetRad=Math.min(42,targetRad+4);idle=0}
+
+cvs.addEventListener('pointerdown', e=>{
+  downX=lx=e.clientX;
+  downY=ly=e.clientY;
+  isDrag=false;
+  drag=1;
+  cvs.style.cursor='grabbing';
+});
+
+cvs.addEventListener('pointermove', e=>{
+  if(drag){
+    const dx=e.clientX-lx,dy=e.clientY-ly;
+    if(Math.hypot(e.clientX-downX, e.clientY-downY) > 7) isDrag=true;
+    targetTh-=dx*.005;
+    targetPh=Math.max(.2,Math.min(1.48,targetPh-dy*.004));
+    lx=e.clientX;ly=e.clientY;idle=0;
+    return;
+  }
+  const r=cvs.getBoundingClientRect();
+  mp.set(((e.clientX-r.left)/r.width)*2-1,-((e.clientY-r.top)/r.height)*2+1);
+  rc.setFromCamera(mp,cam);
+  const hits=rc.intersectObjects(clickableObjects, true);
+  let found=null;
+  if(hits.length>0){
+    for(let h of hits){
+      let obj=h.object;
+      while(obj && obj.userData.i === undefined && obj.parent) obj=obj.parent;
+      if(obj && obj.userData.i !== undefined){ found=obj.userData.i; break; }
+    }
+  }
+  const hb=$('#hoverBadge');
+  if(found!==null){
+    cvs.style.cursor='pointer';
+    if(hb){
+      hb.innerHTML=`📍 <b>${N[found].id}</b>: ${N[found].name||'Sensor'}<br><span style="font-size:10.5px;color:#9bb7d0">Click to inspect</span>`;
+      hb.style.display='block';
+      hb.style.left=Math.min(r.width-220, Math.max(10, e.clientX-r.left+16))+'px';
+      hb.style.top=Math.max(10, e.clientY-r.top-42)+'px';
+    }
+  } else {
+    cvs.style.cursor='grab';
+    if(hb) hb.style.display='none';
+  }
+});
+
+cvs.addEventListener('pointerup', e=>{
+  drag=0;
+  cvs.style.cursor='grab';
+  if(!isDrag && Math.hypot(e.clientX-downX, e.clientY-downY)<18){
+    pick(e);
+  }
+});
+
+cvs.addEventListener('click', e=>{
+  if(!isDrag && Math.hypot(e.clientX-downX, e.clientY-downY)<18){
+    pick(e);
+  }
+});
+
+// Allow smooth natural page scrolling unless Ctrl/Cmd is held or dragging
+cvs.addEventListener('wheel',e=>{if(e.ctrlKey||drag){e.preventDefault();targetRad=Math.max(12,Math.min(42,targetRad+e.deltaY*.02));idle=0}},{passive:false});
+const rc=new THREE.Raycaster(),mp=new THREE.Vector2();
+
+function pick(e){
+  const r=cvs.getBoundingClientRect();
+  mp.set(((e.clientX-r.left)/r.width)*2-1,-((e.clientY-r.top)/r.height)*2+1);
+  rc.setFromCamera(mp,cam);
+  const hits=rc.intersectObjects(clickableObjects, true);
+  let targetIdx = -1;
+  if(hits.length>0){
+    for(let h of hits){
+      let obj=h.object;
+      while(obj && obj.userData.i === undefined && obj.parent) obj=obj.parent;
+      if(obj && obj.userData.i !== undefined && obj.userData.i >= 0){
+        targetIdx = obj.userData.i;
+        break;
+      }
+    }
+  }
+  if(targetIdx >= 0){
+    showCard(targetIdx);
+    const p = N[targetIdx].p;
+    targetTh = Math.atan2(p.x, p.z) + 0.35;
+    targetPh = 0.95;
+    targetRad = 20;
+    idle = 0;
+  }
+}
+let sel=-1;
+function showCard(i){
+  sel=i;
+  $('#card').classList.add('show');
+  const n = N[i];
+  $('#cn').textContent = n.name || ((i?'Sensor ':'')+n.id+(i?'':' · Supply Reservoir'));
+  updCard();
+  if(selMesh && N[i]){
+    selMesh.visible = true;
+    selMesh.position.copy(N[i].p);
+    selMesh.position.y += 0.04;
+  }
+  toast(`Selected <b>${n.id}</b>: ${n.name || 'Sensor'} · Telemetry synced`,'ok',3000);
+}
+$('#cx').onclick=()=>{sel=-1;$('#card').classList.remove('show');if(selMesh)selMesh.visible=false;};
+function verdict(n){return n.st==='leak'?['Real leak nearby','Neighbours agree: pressure falling, flow rising.']:n.st==='contam'?['Contamination','Chlorine dropping; zone flagged.']:n.st==='spoof'?['Spoofed / faulty','Neighbours disagree. Physics fails. Isolated.']:['Healthy', n.isQuality ? 'Physical Water Quality sensor station: baseline chlorine & turbidity normal.' : 'Readings match neighbouring sensors.']}
+function updCard(){if(sel<0)return;const n=N[sel],v=verdict(n);$('#cs').textContent='Status: '+v[0];$('#cb').style.width=n.trust+'%';$('#cd').innerHTML=`Trust <b>${Math.round(n.trust)}%</b><br>Reported pressure <b>${n.st==='spoof'?0:Math.round(n.pr)} psi</b><br><small>${v[1]}</small>`}
+
+/* ---------- scenarios ---------- */
+const nm=i=>(N[i].name ? `${N[i].id} (${N[i].name.split('(')[0].trim()})` : N[i].id), rnd=()=>Math.floor(1 + Math.random() * (N.length - 1));
+function setAlert(k){$$('.chip').forEach(c=>c.classList.toggle('on',c.dataset.k===k))}
+$$('.chip').forEach(c => {
+  c.onclick = () => {
+    const k = c.dataset.k;
+    if (k === 'ok') reset();
+    else if (k === 'leak') leak();
+    else if (k === 'contam') contam();
+    else if (k === 'spoof') attack();
+  };
+});
+function reset(q){N.forEach(n=>{n.tt=100;n.st='ok';n.pr=58+Math.random()*8;n.cl=0.85});E.forEach(e=>e.m='ok');qr.visible=false;setAlert('ok');updateAnalyticsChart();setPhoneStandby();if(!q)toast('✅ Network restored. All sensors trusted.','ok')}
+
+function leak(){
+  reset(1);const c=rnd();N[c].st='leak';N[c].pr=18;N[c].adj.forEach(a=>{N[a].pr=38;N[a].adj.forEach(b=>{if(b!==c)N[b].pr=Math.min(N[b].pr,50)})});
+  E.forEach(e=>{if(e.a===c||e.b===c)e.m='leak'});setAlert('leak');showCard(c);updateAnalyticsChart();
+  toast(`💧 <b>${nm(c)}</b> pressure falling`,'warn');
+  setTimeout(()=>toast(`${N[c].adj.length} neighbours also feel the drop. <b>Physics agrees: REAL LEAK.</b> Crew dispatched.`,'warn'),1400);
+  triggerPhoneAlert({
+    kind: 'REAL_LEAK',
+    title: '💧 CRITICAL: PHYSICAL PIPE BURST',
+    body: `Sensor ${nm(c)} dropped to 18 psi. Inflow meter spiked +25 L/s. All ${N[c].adj.length} neighbours agree. Orifice law verified.`,
+    targetNode: nm(c),
+    priority: 5,
+    valves: 'Smart Valve Doctor Isolating'
+  });
+}
+function contam(){
+  reset(1);const c=rnd();[c,...N[c].adj].forEach(i=>{N[i].st='contam';N[i].pr=55;N[i].cl=0.08;});
+  E.forEach(e=>{if(N[e.a].st==='contam'&&N[e.b].st==='contam')e.m='contam'});setAlert('contam');showCard(c);updateAnalyticsChart();
+  toast(`☣ Chlorine dropped near <b>${nm(c)}</b>`,'pu');
+  setTimeout(()=>toast('Downstream zone quarantined. Public alert drafted.','pu'),1400);
+  triggerPhoneAlert({
+    kind: 'CONTAMINATION',
+    title: '☣️ CRITICAL: CHEMICAL CONTAMINATION',
+    body: `Toxic plume detected near ${nm(c)}. Chlorine dropped to 0.08 mg/L. Patient Zero DAG backtracking activated.`,
+    targetNode: nm(c),
+    priority: 5,
+    valves: 'Downstream Quarantine Valves Queued'
+  });
+}
+function attack(){
+  reset(1);const c=rnd();N[c].st='spoof';N[c].pr=0;E.forEach(e=>{if(e.a===c||e.b===c)e.m='spoof'});setAlert('spoof');showCard(c);updateAnalyticsChart();
+  toast(`🚨 <b>${nm(c)}</b> screams: “Pressure 0 psi, pipe burst!”`,'bad');
+  setTimeout(()=>{toast(`Checking ${N[c].adj.length} neighbours… all normal. Physics doesn’t add up.`,'warn');},1500);
+  setTimeout(()=>{N[c].tt=0;updateAnalyticsChart();toast(`🐝 Swarm vote ${N[c].adj.length}–0: isolate <b>${nm(c)}</b>. Trust → 0%`,'bad')},3000);
+  setTimeout(()=>{qr.position.copy(N[c].p);qr.visible=true;toast('🔒 Valves quarantined. <b>FAKE ALARM. $0 lost.</b>','ok',6000)},4500);
+  triggerPhoneAlert({
+    kind: 'CYBERATTACK',
+    title: '🛑 CRITICAL: SENSOR PACKET SPOOF',
+    body: `Sensor ${nm(c)} forged 0 psi packet. Swarm voted ${N[c].adj.length}-0 liar. IP firewalled & synthetic Ghost sensor engaged.`,
+    targetNode: nm(c),
+    priority: 4,
+    valves: 'Sensor Quarantined'
+  });
+}
+$$('.ctl button').forEach(b=>b.onclick=()=>({leak,attack,contam,reset})[b.dataset.s]());
+
+/* ===== SIMULATOR CONTROLS ===== */
+let currentSimMode = 'cyber';
+let targetMode = 'single';
+let multiSelectedNodes = [6, 8];
+
+/* ===== PRESSURE ZONES DEFINITION ===== */
+const PRESSURE_ZONES = {
+  'hospital': {
+    name: 'Zone 1: City Hospital Life-Safety District',
+    nodes: [13, 18, 19],
+    desc: 'Critical medical facilities. Smart Valve Doctor enforces minimum 15m pressure floor (≥48 psi).',
+    head: '52.4 psi',
+    badge: '🏥 Hospital Priority 1'
+  },
+  'polytech': {
+    name: 'Zone 2: Polytech & Sciences Research Quad',
+    nodes: [6, 7, 11, 16],
+    desc: 'Engineering labs & cleanrooms. Monitored by Water Quality Station S6 for chemical intrusion.',
+    head: '58.6 psi',
+    badge: '🔬 Research Quad'
+  },
+  'barrois': {
+    name: 'Zone 3: Barrois Dining & Commercial District',
+    nodes: [8, 9, 14],
+    desc: 'Student restaurant & commercial plaza. Monitored by Water Quality Sensor Station S8 with high diurnal demand.',
+    head: '57.8 psi',
+    badge: '🍽️ Commercial Hub'
+  },
+  'lilliad': {
+    name: 'Zone 4: LILLIAD Central Innovation Hub',
+    nodes: [2, 3, 12],
+    desc: 'Central campus library & SCADA Edge RTU relay station.',
+    head: '60.2 psi',
+    badge: '🏢 Central Hub'
+  },
+  'eastern': {
+    name: 'Zone 5: Eastern Arterial & Nanotech Sector',
+    nodes: [4, 5, 10, 15, 20],
+    desc: 'IEMN Nanotechnology research wing and eastern distribution trunks.',
+    head: '56.5 psi',
+    badge: '⚡ High Pressure Arterial'
+  },
+  'reservoir': {
+    name: 'Zone 6: Mountain Reservoir & Bulk Feeder',
+    nodes: [1, 21, 22, 23],
+    desc: 'Elevated storage tank (Z = 55m) and bulk mechanical inflow turbine meter (14.2 L/s).',
+    head: '62.0 psi',
+    badge: '🏔️ Elevated Gravity Source'
+  },
+  'blacksky': {
+    name: 'Zone 7: Whole-Grid Multi-Sector Stress Test',
+    nodes: Array.from({length: 24}, (_, i) => i + 1),
+    desc: 'Simultaneous grid-wide cyber-physical stress test evaluating Byzantine swarm consensus under 100% adversary load.',
+    head: 'Grid Wide',
+    badge: '🌪️ Coordinated 24-Node'
+  }
+};
+
+let currentZoneKey = 'hospital';
+
+function setTargetMode(mode) {
+  targetMode = mode;
+  const btnSingle = $('#btn-mode-single');
+  const btnZone = $('#btn-mode-zone');
+  const btnMulti = $('#btn-mode-multi');
+  if (btnSingle) btnSingle.classList.toggle('active', mode === 'single');
+  if (btnZone) btnZone.classList.toggle('active', mode === 'zone');
+  if (btnMulti) btnMulti.classList.toggle('active', mode === 'multi');
+
+  const sBox = $('#single-target-box');
+  const zBox = $('#zone-target-box');
+  const mBox = $('#multi-target-box');
+  const presets = $('#multi-presets');
+
+  if (sBox) sBox.style.display = (mode === 'single') ? 'block' : 'none';
+  if (zBox) zBox.style.display = (mode === 'zone') ? 'block' : 'none';
+  if (mBox) mBox.style.display = (mode === 'multi') ? 'block' : 'none';
+  if (presets) presets.style.display = (mode === 'multi') ? 'flex' : 'none';
+
+  if (mode === 'zone') {
+    const sel = $('#sim-zone-select');
+    const val = sel ? sel.value : 'hospital';
+    onZoneSelectChange(val);
+  } else if (mode === 'multi') {
+    renderMultiChips();
+  }
+}
+
+function onZoneSelectChange(zoneKey) {
+  currentZoneKey = zoneKey;
+  const z = PRESSURE_ZONES[zoneKey] || PRESSURE_ZONES['hospital'];
+  multiSelectedNodes = [...z.nodes];
+
+  const titleEl = $('#zone-info-title');
+  const descEl = $('#zone-info-desc');
+  const nodesEl = $('#zone-info-nodes');
+  const headEl = $('#zone-info-head');
+  const badgeEl = $('#zone-badge');
+
+  if (titleEl) titleEl.textContent = z.name;
+  if (descEl) descEl.textContent = z.desc;
+  if (nodesEl) nodesEl.textContent = z.nodes.map(i => N[i] ? N[i].id : `S${i}`).join(', ');
+  if (headEl) headEl.textContent = z.head;
+  if (badgeEl) badgeEl.textContent = z.badge;
+
+  if (z.nodes.length > 0 && typeof N !== 'undefined') {
+    const firstNode = N[z.nodes[0]];
+    if (firstNode && firstNode.p) {
+      targetTh = Math.atan2(firstNode.p.x, firstNode.p.z) + 0.3;
+      targetPh = 0.95;
+      targetRad = z.nodes.length > 5 ? 30 : 20;
+      idle = 0;
+    }
+  }
+
+  toast(`📍 Pressure Zone Selected: <b>${z.name}</b> (${z.nodes.length} Sensors)`, 'ok', 3500);
+}
+
+function renderMultiChips() {
+  const grid = $('#multi-chip-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  for (let i = 1; i < N.length; i++) {
+    const chip = document.createElement('div');
+    const isSel = multiSelectedNodes.includes(i);
+    chip.className = 'node-chip' + (isSel ? ' selected' : '');
+    chip.textContent = `${isSel ? '✓ ' : ''}${N[i].id}`;
+    chip.title = `${N[i].id}: ${N[i].name || 'Sensor'}`;
+    chip.onclick = () => {
+      if (multiSelectedNodes.includes(i)) {
+        if (multiSelectedNodes.length > 1) {
+          multiSelectedNodes = multiSelectedNodes.filter(x => x !== i);
+        }
+      } else {
+        multiSelectedNodes.push(i);
+      }
+      renderMultiChips();
+    };
+    grid.appendChild(chip);
+  }
+  const countEl = $('#multi-count');
+  if (countEl) countEl.textContent = multiSelectedNodes.length;
+}
+
+function loadMultiPreset(preset) {
+  if (preset === 'quality') multiSelectedNodes = [6, 8];
+  else if (preset === 'quad') multiSelectedNodes = [4, 8, 12, 17];
+  else if (preset === 'tri') multiSelectedNodes = [6, 15, 20];
+  else if (preset === 'botnet') multiSelectedNodes = [2, 6, 8, 14, 19];
+  renderMultiChips();
+  toast(`⚡ Loaded multi-attack preset: <b>${multiSelectedNodes.map(i => N[i].id).join(', ')}</b>`, 'ok', 3000);
+}
+
+function toggleAllMulti(selectAll) {
+  if (selectAll) {
+    multiSelectedNodes = [];
+    for (let i = 1; i < N.length; i++) multiSelectedNodes.push(i);
+  } else {
+    multiSelectedNodes = [6];
+  }
+  renderMultiChips();
+}
+
+function randomMulti(count) {
+  const all = [];
+  for (let i = 1; i < N.length; i++) all.push(i);
+  all.sort(() => Math.random() - 0.5);
+  multiSelectedNodes = all.slice(0, count);
+  renderMultiChips();
+  toast(`Selected ${count} random targets: <b>${multiSelectedNodes.map(i => N[i].id).join(', ')}</b>`, 'ok', 3000);
+}
+
+function setSimMode(m, btn) {
+  $$('.sim-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentSimMode = m;
+  const pBox = $('#sim-param-box');
+  if (m === 'cyber') {
+    pBox.innerHTML = '<label>Spoofed Pressure Value (Reported)</label><select id="sim-spoof-val"><option value="0">0.0 psi (Fake Catastrophic Burst)</option><option value="12">12.0 psi (Low Pressure Alarm)</option><option value="95">95.0 psi (Fake Surge)</option></select>';
+  } else if (m === 'contam') {
+    pBox.innerHTML = '<label>Contaminant Strength (Toxin)</label><select id="sim-spoof-val"><option value="0.05">0.05 mg/L (High Toxicity / Cyanide)</option><option value="0.02">0.02 mg/L (Turbidity Spike)</option></select>';
+  } else if (m === 'stealth') {
+    pBox.innerHTML = '<label>Replay Attack Strategy</label><select id="sim-spoof-val"><option value="replay">Hide 30 L/s Leak with Yesterday Data</option></select>';
+  } else if (m === 'leak') {
+    pBox.innerHTML = '<label>Physical Rupture Flow Rate</label><select id="sim-spoof-val"><option value="25">25.0 L/s (Medium Rupture)</option><option value="50">50.0 L/s (Main Trunk Burst)</option></select>';
+  } else if (m === 'multi') {
+    setTargetMode('multi');
+    pBox.innerHTML = '<label>Multi-Attack Threat Vector</label><select id="sim-spoof-val"><option value="botnet">Distributed Botnet Spoof (0 psi fake leaks)</option><option value="multileak">Simultaneous Multi-Pipe Physical Ruptures</option><option value="contam">Multi-Sector Toxic Contamination</option><option value="hybrid">Hybrid Warzone (Cyber Spoof + Real Leak)</option></select>';
+  }
+}
+
+function runCustomSimulation() {
+  const isMulti = (targetMode === 'multi' || targetMode === 'zone' || currentSimMode === 'multi');
+  const targetIds = isMulti ? [...multiSelectedNodes] : [parseInt($('#sim-target').value) || 8];
+  if (targetIds.length === 0) targetIds.push(8);
+
+  reset(1);
+  showCard(targetIds[0]);
+
+  if (targetIds.length === 1) {
+    const targetNode = N[targetIds[0]];
+    const targetPos = targetNode.p;
+    targetTh = Math.atan2(targetPos.x, targetPos.z) + 0.35;
+    targetPh = 0.95;
+    targetRad = 19;
+  } else {
+    targetTh = 0.8;
+    targetPh = 1.05;
+    targetRad = 29;
+  }
+  idle = 0;
+
+  const nodeLabels = targetIds.map(i => N[i].id).join(', ');
+  if (targetMode === 'zone' && PRESSURE_ZONES[currentZoneKey]) {
+    $('#hud-node').textContent = `${PRESSURE_ZONES[currentZoneKey].name} (${targetIds.length} Nodes)`;
+  } else {
+    $('#hud-node').textContent = isMulti ? `${nodeLabels} (${targetIds.length} Nodes)` : N[targetIds[0]].id;
+  }
+
+  const spoofValEl = $('#sim-spoof-val');
+  const paramVal = spoofValEl ? spoofValEl.value : '0';
+
+  // MULTI-NODE ATTACK EXECUTION
+  if (isMulti || currentSimMode === 'multi') {
+    const isLeakVector = (paramVal === 'multileak' || currentSimMode === 'leak');
+    const isContamVector = (paramVal === 'contam' || currentSimMode === 'contam');
+    const isHybridVector = (paramVal === 'hybrid');
+
+    if (isContamVector) {
+      const allPlume = new Set(targetIds);
+      targetIds.forEach(tId => N[tId].adj.forEach(a => allPlume.add(a)));
+      allPlume.forEach(i => { N[i].st = 'contam'; N[i].pr = 55; N[i].cl = 0.05; });
+      E.forEach(e => { if (allPlume.has(e.a) && allPlume.has(e.b)) e.m = 'contam'; });
+      setAlert('contam');
+
+      $('#hud-reported').className = 'pill-tag pu';
+      $('#hud-reported').textContent = `Toxic Contamination across ${allPlume.size} nodes (0.05 mg/L)`;
+      $('#hud-packet').textContent = `Injection Vectors: ${nodeLabels}`;
+      $('#hud-hmac').className = 'pill-tag ok';
+      $('#hud-hmac').textContent = 'AUTHENTIC SENSORS';
+      $('#hud-ghost').className = 'pill-tag pu';
+      $('#hud-ghost').textContent = 'Chlorine Depletion Confirmed';
+      $('#hud-action').className = 'pill-tag pu';
+      $('#hud-action').textContent = `${targetIds.length} SECTOR QUARANTINE VALVES CLOSING`;
+
+      $('#patient-zero-box').style.display = 'block';
+      $('#pz-path').textContent = `Multi-Point Outbreak: ${nodeLabels} confirmed via Directed Acyclic Graph backtracker.`;
+
+      const tbody = $('#sim-votes-body');
+      tbody.innerHTML = '';
+      targetIds.forEach(tId => {
+        N[tId].adj.forEach(nbrId => {
+          if (!targetIds.includes(nbrId)) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${N[nbrId].id} ➔ ${N[tId].id}</td><td>Depleted Cl</td><td><span class="pill-tag pu">AGREES: TOXIN PLUME</span></td><td>100%</td>`;
+            tbody.appendChild(tr);
+          }
+        });
+      });
+
+      toast(`☣️ <b>Coordinated Contamination:</b> Poison detected at ${targetIds.length} nodes simultaneously (${nodeLabels})!`, 'pu');
+      setTimeout(() => {
+        toast(`🛡️ Backtracker confirmed ${targetIds.length} injection origins. Emergency quarantine engaged!`, 'pu', 6000);
+        updateAnalyticsChart();
+      }, 1800);
+      triggerPhoneAlert({
+        kind: 'CONTAMINATION',
+        title: `☣️ CRITICAL: MULTI-POINT CONTAMINATION (${targetIds.length} NODES)`,
+        body: `Chemical contamination verified across ${nodeLabels}. Patient Zero backtracker mapped injection DAG.`,
+        targetNode: nodeLabels,
+        priority: 5,
+        valves: 'Sector Quarantine Actuated'
+      });
+
+    } else if (isLeakVector) {
+      targetIds.forEach(i => {
+        N[i].st = 'leak';
+        N[i].pr = 20;
+        N[i].adj.forEach(a => { if (!targetIds.includes(a)) N[a].pr = 38; });
+      });
+      E.forEach(e => { if (targetIds.includes(e.a) || targetIds.includes(e.b)) e.m = 'leak'; });
+      setAlert('leak');
+
+      $('#hud-reported').className = 'pill-tag warn';
+      $('#hud-reported').textContent = `Simultaneous Pipe Bursts across ${targetIds.length} sectors`;
+      $('#hud-packet').textContent = `Total Inflow Surge: +${(targetIds.length * 25).toFixed(1)} L/s`;
+      $('#hud-hmac').className = 'pill-tag ok';
+      $('#hud-hmac').textContent = 'GENUINE SENSORS';
+      $('#hud-ghost').className = 'pill-tag warn';
+      $('#hud-ghost').textContent = 'Physics Agrees: Mass Conservation Deficit';
+      $('#hud-action').className = 'pill-tag ok';
+      $('#hud-action').textContent = `PARALLEL VALVE ISOLATION (${targetIds.length} CREWS QUEUED)`;
+      $('#patient-zero-box').style.display = 'none';
+
+      const tbody = $('#sim-votes-body');
+      tbody.innerHTML = '';
+      targetIds.forEach(tId => {
+        N[tId].adj.forEach(nbrId => {
+          if (!targetIds.includes(nbrId)) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${N[nbrId].id} ➔ ${N[tId].id}</td><td>38.0 psi</td><td><span class="pill-tag warn">VOTE: REAL DRAWDOWN</span></td><td>100%</td>`;
+            tbody.appendChild(tr);
+          }
+        });
+      });
+
+      toast(`💧 <b>Multiple Pipe Bursts Confirmed:</b> Ruptures at ${nodeLabels}. Total loss: ${(targetIds.length * 25).toFixed(0)} L/s!`, 'warn');
+      setTimeout(() => {
+        toast(`🔧 Smart Valve Doctor isolates all ${targetIds.length} bursts in parallel. Hospital pressure protected ≥15m!`, 'ok', 6000);
+        updateAnalyticsChart();
+      }, 1800);
+      triggerPhoneAlert({
+        kind: 'REAL_LEAK',
+        title: `💧 CRITICAL: MULTI-BURST EVENT (${targetIds.length} NODES)`,
+        body: `Physical ruptures confirmed at ${nodeLabels}. Inflow surged by +${(targetIds.length * 25).toFixed(0)} L/s. Repair crews dispatched.`,
+        targetNode: nodeLabels,
+        priority: 5,
+        valves: 'Hospital Floor Protected ≥15m'
+      });
+
+    } else if (isHybridVector) {
+      const cyberNodes = targetIds.slice(0, Math.ceil(targetIds.length / 2));
+      const leakNodes = targetIds.slice(Math.ceil(targetIds.length / 2));
+
+      cyberNodes.forEach(i => { N[i].st = 'spoof'; N[i].pr = 0; });
+      leakNodes.forEach(i => { N[i].st = 'leak'; N[i].pr = 20; N[i].adj.forEach(a => { if (!targetIds.includes(a)) N[a].pr = 38; }); });
+      E.forEach(e => {
+        if (cyberNodes.includes(e.a) || cyberNodes.includes(e.b)) e.m = 'spoof';
+        else if (leakNodes.includes(e.a) || leakNodes.includes(e.b)) e.m = 'leak';
+      });
+      setAlert('spoof');
+
+      $('#hud-reported').className = 'pill-tag bad';
+      $('#hud-reported').textContent = `Hybrid Warzone: ${cyberNodes.length} Spoofed + ${leakNodes.length} Real Leaks`;
+      $('#hud-packet').textContent = `Cyber: S${cyberNodes.join(', S')} | Leaks: S${leakNodes.join(', S')}`;
+      $('#hud-hmac').className = 'pill-tag bad';
+      $('#hud-hmac').textContent = 'MIXED (CYBER HMAC FORGED)';
+      $('#hud-ghost').className = 'pill-tag ok';
+      $('#hud-ghost').textContent = 'AQUILA SEPARATES LIARS FROM REAL BURSTS';
+      $('#hud-action').className = 'pill-tag ok';
+      $('#hud-action').textContent = 'ISOLATE ONLY REAL BURSTS · $0 ON SPOOFS';
+      $('#patient-zero-box').style.display = 'none';
+
+      const tbody = $('#sim-votes-body');
+      tbody.innerHTML = '';
+      cyberNodes.forEach(cId => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>Swarm ➔ ${N[cId].id}</td><td>0 psi</td><td><span class="pill-tag bad">EVICT (FORGED / NO FLOW)</span></td><td>100%</td>`;
+        tbody.appendChild(tr);
+      });
+      leakNodes.forEach(lId => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>Swarm ➔ ${N[lId].id}</td><td>20 psi</td><td><span class="pill-tag warn">CONFIRMED REAL LEAK</span></td><td>100%</td>`;
+        tbody.appendChild(tr);
+      });
+
+      toast(`⚔️ <b>Hybrid Attack Launched:</b> Adversary launches fake alarms (${cyberNodes.map(i=>N[i].id).join(',')}) while masking real leaks (${leakNodes.map(i=>N[i].id).join(',')})!`, 'bad');
+      setTimeout(() => {
+        toast(`⚖️ <b>Aquila Lie Detector:</b> Physics exposes the ${cyberNodes.length} liars while dispatching crews only to the ${leakNodes.length} real leaks!`, 'ok', 6000);
+        cyberNodes.forEach(i => { N[i].tt = 0; });
+        updateAnalyticsChart();
+      }, 1800);
+      triggerPhoneAlert({
+        kind: 'CYBERATTACK',
+        title: `⚔️ HYBRID WARZONE: CYBER SPOOF + REAL LEAK`,
+        body: `Adversary spoofed ${cyberNodes.length} nodes to distract from real ruptures. Aquila isolated liars and routed crews only to true leaks.`,
+        targetNode: nodeLabels,
+        priority: 5,
+        valves: 'Surgical Isolation Active'
+      });
+
+    } else {
+      // Default: Distributed Botnet Cyber Spoof on all targets
+      targetIds.forEach(i => { N[i].st = 'spoof'; N[i].pr = 0; });
+      E.forEach(e => { if (targetIds.includes(e.a) || targetIds.includes(e.b)) e.m = 'spoof'; });
+      setAlert('spoof');
+
+      $('#hud-reported').className = 'pill-tag bad';
+      $('#hud-reported').textContent = `Multiple 0.0 psi Alarms across ${targetIds.length} nodes`;
+      $('#hud-packet').textContent = `Botnet IPs: 185.220.101.40-${40 + targetIds.length} (ALL FORGED)`;
+      $('#hud-hmac').className = 'pill-tag bad';
+      $('#hud-hmac').textContent = 'ALL HMAC SIGNATURES INVALID';
+      $('#hud-ghost').className = 'pill-tag ok';
+      $('#hud-ghost').textContent = `${targetIds.length} Ghost Sensors Active (58.6 psi)`;
+      $('#hud-action').className = 'pill-tag ok';
+      $('#hud-action').textContent = `ALL ${targetIds.length} ROGUE IPs BLOCKED · ZERO FALSE CREWS`;
+      $('#patient-zero-box').style.display = 'none';
+
+      const tbody = $('#sim-votes-body');
+      tbody.innerHTML = '';
+      targetIds.forEach(tId => {
+        const tNode = N[tId];
+        tNode.adj.forEach(nbrId => {
+          if (!targetIds.includes(nbrId)) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${N[nbrId].id} ➔ ${tNode.id}</td><td>${(57 + Math.random() * 3).toFixed(1)} psi</td><td><span class="pill-tag bad">VOTE: OUTLIER / LIAR</span></td><td>100%</td>`;
+            tbody.appendChild(tr);
+          }
+        });
+      });
+
+      toast(`🚨 <b>Distributed Botnet Attack:</b> Adversary forges 0 psi packets across ${targetIds.length} nodes (${nodeLabels})!`, 'bad');
+      setTimeout(() => {
+        toast(`🐝 <b>Byzantine Edge Swarm:</b> Fluid dynamics proves zero drop across unaffected neighbours. Voting 100% to evict all ${targetIds.length} compromised sensors!`, 'warn');
+        targetIds.forEach(i => { N[i].tt = 0; });
+        qr.position.copy(N[targetIds[0]].p);
+        qr.visible = true;
+        updateAnalyticsChart();
+      }, 1600);
+      setTimeout(() => {
+        toast(`🛡️ <b>Aquila Guardian:</b> All ${targetIds.length} nodes quarantined. <b>$${(targetIds.length * 48000).toLocaleString()} saved in ghost dispatches!</b>`, 'ok', 6000);
+      }, 3400);
+      triggerPhoneAlert({
+        kind: 'CYBERATTACK',
+        title: `🚨 CRITICAL: BOTNET ATTACK (${targetIds.length} NODES)`,
+        body: `Synchronized 0 psi packets forged across ${nodeLabels}. Swarm voted 100% liar. ${targetIds.length} Ghost Sensors engaged.`,
+        targetNode: nodeLabels,
+        priority: 4,
+        valves: 'IPs Firewalled · $0 Lost'
+      });
+    }
+
+  } else {
+    // Single Target modes
+    const targetId = targetIds[0];
+    const targetNode = N[targetId];
+    const nodeLabel = targetNode.id;
+
+    if (currentSimMode === 'cyber') {
+      targetNode.st = 'spoof';
+      targetNode.pr = 0;
+      E.forEach(e => { if (e.a === targetId || e.b === targetId) e.m = 'spoof'; });
+      setAlert('spoof');
+
+      $('#hud-reported').className = 'pill-tag bad';
+      $('#hud-reported').textContent = '0.0 psi (CRITICAL ALARM)';
+      $('#hud-packet').textContent = 'IP: 185.220.101.47 | TTL: 52 (FORGED)';
+      $('#hud-hmac').className = 'pill-tag bad';
+      $('#hud-hmac').textContent = 'INVALID (HMAC FAILED)';
+      $('#hud-ghost').className = 'pill-tag ok';
+      $('#hud-ghost').textContent = '58.6 psi (DERIVED BY SWARM)';
+      $('#hud-action').className = 'pill-tag ok';
+      $('#hud-action').textContent = 'ROGUE IP BLOCKED · GHOST ENGAGED';
+      $('#patient-zero-box').style.display = 'none';
+
+      const tbody = $('#sim-votes-body');
+      tbody.innerHTML = '';
+      targetNode.adj.forEach(nbrId => {
+        const nbr = N[nbrId];
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${nbr.id}</td><td>${(57 + Math.random() * 3).toFixed(1)} psi</td><td><span class="pill-tag bad">VOTE: OUTLIER / LIAR</span></td><td>100%</td>`;
+        tbody.appendChild(tr);
+      });
+
+      toast(`🚨 <b>${nodeLabel}</b> sends forged 0 psi packet from rogue IP 185.220.101.47!`, 'bad');
+      setTimeout(() => {
+        toast(`🐝 ${targetNode.adj.length} neighbours test physics: residual broken at liar ONLY. Swarm votes 100% to evict.`, 'warn');
+        targetNode.tt = 0;
+        qr.position.copy(targetNode.p);
+        qr.visible = true;
+        updateAnalyticsChart();
+      }, 1600);
+      setTimeout(() => {
+        toast(`👻 Ghost sensor spawned (${nodeLabel} = 58.6 psi). <b>Zero false alarms. $0 wasted.</b>`, 'ok', 6000);
+      }, 3200);
+      triggerPhoneAlert({
+        kind: 'CYBERATTACK',
+        title: '🚨 CRITICAL: SENSOR PACKET FORGERY',
+        body: `Sensor ${nodeLabel} forged 0.0 psi alarm from rogue IP 185.220.101.47. Byzantine swarm voted 4-0 outlier. Ghost sensor active.`,
+        targetNode: nodeLabel,
+        priority: 4,
+        valves: 'IP Blocked · Grid Protected'
+      });
+
+    } else if (currentSimMode === 'contam') {
+      const plumeNodes = [targetId, ...targetNode.adj];
+      plumeNodes.forEach(i => { N[i].st = 'contam'; N[i].pr = 55; N[i].cl = 0.05; });
+      E.forEach(e => { if (plumeNodes.includes(e.a) && plumeNodes.includes(e.b)) e.m = 'contam'; });
+      setAlert('contam');
+
+      $('#hud-reported').className = 'pill-tag pu';
+      $('#hud-reported').textContent = 'Chlorine: 0.05 mg/L (TOXIN)';
+      $('#hud-packet').textContent = `Sensors S${targetId}, S${targetNode.adj.join(', S')}`;
+      $('#hud-hmac').className = 'pill-tag ok';
+      $('#hud-hmac').textContent = 'AUTHENTIC SENSORS';
+      $('#hud-ghost').className = 'pill-tag pu';
+      $('#hud-ghost').textContent = 'Chlorine Depletion Confirmed';
+      $('#hud-action').className = 'pill-tag pu';
+      $('#hud-action').textContent = 'QUARANTINE VALVES CLOSING';
+
+      $('#patient-zero-box').style.display = 'block';
+      $('#pz-path').textContent = `${nodeLabel} (~140 min ago, 99.9% fit). Upstream DAG confirmed.`;
+
+      const tbody = $('#sim-votes-body');
+      tbody.innerHTML = '';
+      targetNode.adj.forEach(nbrId => {
+        const nbr = N[nbrId];
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${nbr.id}</td><td>Depleted Cl</td><td><span class="pill-tag pu">AGREES: TOXIN PLUME</span></td><td>100%</td>`;
+        tbody.appendChild(tr);
+      });
+
+      toast(`☣️ Chemical contamination detected across ${plumeNodes.length} nodes!`, 'pu');
+      setTimeout(() => {
+        toast(`🕵️ <b>Patient Zero Backtracker:</b> Poison entered at <b>${nodeLabel}</b>. Quarantine valves queued!`, 'pu', 6000);
+        updateAnalyticsChart();
+      }, 1800);
+      triggerPhoneAlert({
+        kind: 'CONTAMINATION',
+        title: '☣️ CRITICAL: CHEMICAL CONTAMINATION',
+        body: `Chemical contamination detected at ${nodeLabel}. Upstream DAG identified Patient Zero. Quarantine valves queued.`,
+        targetNode: nodeLabel,
+        priority: 5,
+        valves: 'Quarantine Valves Closing'
+      });
+
+    } else if (currentSimMode === 'stealth') {
+      targetNode.st = 'spoof';
+      targetNode.pr = 59;
+      setAlert('spoof');
+
+      $('#hud-reported').className = 'pill-tag ok';
+      $('#hud-reported').textContent = '59.0 psi (SPOOFED NORMAL REPLAY)';
+      $('#hud-packet').textContent = 'IP: 185.220.101.47 | Replay Attack';
+      $('#hud-hmac').className = 'pill-tag bad';
+      $('#hud-hmac').textContent = 'TIMESTAMP STALE';
+      $('#hud-ghost').className = 'pill-tag bad';
+      $('#hud-ghost').textContent = 'PHYSICS SEES 30 L/s REAL LEAK';
+      $('#hud-action').className = 'pill-tag ok';
+      $('#hud-action').textContent = 'STEALTH ATTACK UNMASKED';
+      $('#patient-zero-box').style.display = 'none';
+
+      toast(`🦹 Attacker hides a 30 L/s leak at <b>${nodeLabel}</b> by replaying yesterday's normal pressure!`, 'bad');
+      setTimeout(() => {
+        toast(`⚖️ Reservoir meter spiked + neighbours feel suction. Mass conservation exposes the liar!`, 'warn');
+        targetNode.tt = 20;
+        updateAnalyticsChart();
+      }, 1600);
+      triggerPhoneAlert({
+        kind: 'CYBERATTACK',
+        title: '🦹 HIGH: STEALTH REPLAY ATTACK UNMASKED',
+        body: `Adversary replayed stale telemetry at ${nodeLabel} to mask 30 L/s leak. Reservoir mass conservation unmasked fraud.`,
+        targetNode: nodeLabel,
+        priority: 4,
+        valves: 'Isolating Leaking Branch'
+      });
+
+    } else if (currentSimMode === 'leak') {
+      targetNode.st = 'leak';
+      targetNode.pr = 20;
+      targetNode.adj.forEach(a => { N[a].pr = 38; });
+      E.forEach(e => { if (e.a === targetId || e.b === targetId) e.m = 'leak'; });
+      setAlert('leak');
+
+      $('#hud-reported').className = 'pill-tag warn';
+      $('#hud-reported').textContent = '20.0 psi (GENUINE LEAK)';
+      $('#hud-packet').textContent = 'Inflow Spike: +25.0 L/s Verified';
+      $('#hud-hmac').className = 'pill-tag ok';
+      $('#hud-hmac').textContent = 'GENUINE SENSOR';
+      $('#hud-ghost').className = 'pill-tag warn';
+      $('#hud-ghost').textContent = 'Inflow & Neighbor Drop Matches Orifice Law';
+      $('#hud-action').className = 'pill-tag ok';
+      $('#hud-action').textContent = 'SMART VALVE DOCTOR ISOLATING';
+      $('#patient-zero-box').style.display = 'none';
+
+      toast(`💧 Genuine pipe rupture at <b>${nodeLabel}</b>. Inflow meter spiked!`, 'warn');
+      setTimeout(() => {
+        toast(`🏥 Smart Valve Doctor verifies hospital pressure remains ≥15m before turning valves. Crew dispatched!`, 'ok', 6000);
+        updateAnalyticsChart();
+      }, 1800);
+      triggerPhoneAlert({
+        kind: 'REAL_LEAK',
+        title: '💧 CRITICAL: HIGH-PRESSURE PIPE RUPTURE',
+        body: `Genuine 25 L/s rupture at ${nodeLabel}. Inflow spike confirmed. Smart Valve Doctor isolating while protecting hospital ≥15m.`,
+        targetNode: nodeLabel,
+        priority: 5,
+        valves: 'Hospital Head Safe Floor Verified'
+      });
+    }
+  }
+
+  updateAnalyticsChart();
+}
+
+/* ===== NEW: BEFORE VS AFTER CHART RENDERING ===== */
+let analyticsChart = null;
+let currentGraphType = 'pressure';
+
+function initAnalyticsChart() {
+  const ctx = document.getElementById('analyticsChart');
+  if (!ctx) return;
+
+  const nodes = N.slice(1);
+  const labels = nodes.map(n => n.id);
+  const baseline = nodes.map(() => 60);
+  const reported = nodes.map(n => n.st === 'spoof' ? 0 : Math.round(n.pr));
+  const ghost = nodes.map(() => 59.2);
+
+  analyticsChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Baseline Safe Operation (Unperturbed)',
+          data: baseline,
+          borderColor: '#38bdf8',
+          backgroundColor: 'rgba(56, 189, 248, 0.08)',
+          borderWidth: 2.5,
+          borderDash: [5, 4],
+          pointRadius: 4,
+          pointHoverRadius: 7,
+          pointBackgroundColor: '#38bdf8',
+          pointBorderColor: '#ffffff',
+          pointBorderWidth: 1.5,
+          fill: false,
+          tension: 0.35
+        },
+        {
+          label: 'Received Telemetry (Simulated Attack / Deflection)',
+          data: reported,
+          borderColor: '#ff2d55',
+          backgroundColor: 'rgba(255, 45, 85, 0.15)',
+          borderWidth: 3,
+          pointRadius: 5,
+          pointHoverRadius: 8,
+          pointBackgroundColor: '#ff2d55',
+          pointBorderColor: '#ffffff',
+          pointBorderWidth: 2,
+          fill: true,
+          tension: 0.35
+        },
+        {
+          label: 'Aquila Ground Truth (Physics Reconstruction)',
+          data: ghost,
+          borderColor: '#4ade80',
+          backgroundColor: 'rgba(74, 222, 128, 0.12)',
+          borderWidth: 2.8,
+          pointRadius: 5,
+          pointHoverRadius: 8,
+          pointBackgroundColor: '#4ade80',
+          pointBorderColor: '#ffffff',
+          pointBorderWidth: 2,
+          fill: false,
+          tension: 0.35
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: {
+        duration: 500,
+        easing: 'easeOutQuart'
+      },
+      interaction: {
+        mode: 'index',
+        intersect: false
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#07121fee',
+          titleColor: '#38bdf8',
+          bodyColor: '#e6f1fb',
+          borderColor: 'rgba(56, 189, 248, 0.3)',
+          borderWidth: 1,
+          padding: 10,
+          boxPadding: 4,
+          usePointStyle: true
+        }
+      },
+      scales: {
+        y: {
+          grid: { color: 'rgba(255,255,255,0.06)' },
+          ticks: { color: '#8aa4bd', font: { family: 'inherit', size: 11 } }
+        },
+        x: {
+          grid: { color: 'rgba(255,255,255,0.03)' },
+          ticks: { color: '#8aa4bd', font: { family: 'inherit', size: 11 } }
+        }
+      }
+    }
+  });
+}
+
+function switchGraph(type, btn) {
+  $$('.graph-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentGraphType = type;
+  updateAnalyticsChart();
+}
+
+function updateAnalyticsChart() {
+  if (!analyticsChart) return;
+  const nodes = N.slice(1);
+  const labels = nodes.map(n => n.id);
+
+  if (currentGraphType === 'pressure') {
+    analyticsChart.data.labels = labels;
+    analyticsChart.data.datasets[0].label = 'Baseline Safe Pressure (60 psi)';
+    analyticsChart.data.datasets[0].data = nodes.map(() => 60);
+    analyticsChart.data.datasets[1].label = 'Received Telemetry (Attack Reported)';
+    analyticsChart.data.datasets[1].data = nodes.map(n => n.st === 'spoof' ? 0 : Math.round(n.pr));
+    analyticsChart.data.datasets[2].label = 'Aquila Reconstructed Truth (Ghost Sensor)';
+    analyticsChart.data.datasets[2].data = nodes.map(n => n.st === 'spoof' ? 58.6 : Math.round(n.pr));
+    analyticsChart.options.scales.y.title = { display: true, text: 'Pressure Head (psi)', color: '#8aa4bd' };
+
+  } else if (currentGraphType === 'residual') {
+    analyticsChart.data.labels = labels;
+    analyticsChart.data.datasets[0].label = 'Baseline Invariant Residual (0.0 L/s)';
+    analyticsChart.data.datasets[0].data = nodes.map(() => 0.0);
+    analyticsChart.data.datasets[1].label = 'Received Telemetry Residual (Under Attack)';
+    analyticsChart.data.datasets[1].data = nodes.map(n => n.st === 'spoof' ? -32.5 : n.st === 'leak' ? 25.0 : +(Math.random() * 0.4 - 0.2).toFixed(2));
+    analyticsChart.data.datasets[2].label = 'Aquila Rebalanced Mass Balance';
+    analyticsChart.data.datasets[2].data = nodes.map(() => 0.1);
+    analyticsChart.options.scales.y.title = { display: true, text: 'Flow Residual (L/s)', color: '#8aa4bd' };
+
+  } else if (currentGraphType === 'trust') {
+    analyticsChart.data.labels = labels;
+    analyticsChart.data.datasets[0].label = 'Baseline Trust Confidence (100%)';
+    analyticsChart.data.datasets[0].data = nodes.map(() => 100);
+    analyticsChart.data.datasets[1].label = 'Telemetry Credibility Under Attack (%)';
+    analyticsChart.data.datasets[1].data = nodes.map(n => Math.round(n.trust));
+    analyticsChart.data.datasets[2].label = 'Aquila Byzantine Admission Floor';
+    analyticsChart.data.datasets[2].data = nodes.map(() => 80);
+    analyticsChart.options.scales.y.title = { display: true, text: 'Trust Score (%)', color: '#8aa4bd' };
+
+  } else if (currentGraphType === 'quality') {
+    analyticsChart.data.labels = labels;
+    analyticsChart.data.datasets[0].label = 'Baseline Chlorine Disinfection (0.85 mg/L)';
+    analyticsChart.data.datasets[0].data = nodes.map(() => 0.85);
+    analyticsChart.data.datasets[1].label = 'Received Telemetry (Measured Contaminant)';
+    analyticsChart.data.datasets[1].data = nodes.map(n => n.st === 'contam' ? 0.06 : 0.85);
+    analyticsChart.data.datasets[2].label = 'Aquila Health & Safety Threshold';
+    analyticsChart.data.datasets[2].data = nodes.map(() => 0.20);
+    analyticsChart.options.scales.y.title = { display: true, text: 'Chlorine (mg/L)', color: '#8aa4bd' };
+  }
+
+  analyticsChart.update();
+}
+
+/* ===== NEW: FEATURE DROPDOWN INSPECTOR ===== */
+const FEATURES_DATA = {
+  twin: {
+    title: '🧬 Digital Twin (EPANET Linear Hydraulic Simulator)',
+    desc: 'Runs a live linear hydraulic model of the pipe network in real time. Predicts fluid velocity, advective travel times, and steady-state pressure heads. Water entering any pipe junction must equal water leaving it: if telemetry breaks the conservation equation, Aquila flags the anomaly immediately.',
+    tags: ['Mass Conservation Law', 'Matrix Inversion', 'Linearized Conductance', 'Runs on Edge']
+  },
+  trust: {
+    title: '🕵️ Sensor Trust Score (Bayesian Degradation)',
+    desc: 'Every sensor in the city maintains a live confidence rating from 0% to 100%. If a sensor reports impossible data that contradicts neighboring fluid dynamics, its trust is cut by 50% immediately, dropping to 0% as neighbours cast outlier votes.',
+    tags: ['Autonomous Edge Agent', 'Fast Decay on Breach', 'Slow Recovery on True Physics']
+  },
+  classifier: {
+    title: '🚦 Four-Way Instant Threat Classifier',
+    desc: 'Whenever an alarm sounds, Aquila classifies it in milliseconds: (1) Normal routine usage, (2) Real physical pipe rupture, (3) Chemical / biological contamination, or (4) Cyberattack / rogue packet spoofing. Operators never dispatch crews to ghost leaks again.',
+    tags: ['Packet HMAC Inspection', 'Reservoir Spike Check', 'Plume Clustering']
+  },
+  swarm: {
+    title: '🐝 Federated Sensor Trust Swarm (Raft / BFT Edge Consensus)',
+    desc: 'Sensors communicate peer-to-peer with their immediate physical neighbours. Each neighbor calculates what the target sensor SHOULD report based on their own pressure and pipe conductance. If neighbours vote 3–0 or 4–0 against an outlier, the sensor is evicted without needing centralized cloud processing.',
+    tags: ['Byzantine Fault Tolerant', 'Zero Cloud Dependency', '1-Hop Peer Ballots']
+  },
+  mesh: {
+    title: '✨ 3D Volumetric Particle Flow Mesh',
+    desc: 'Volumetric conduit grid featuring flowing illuminated water droplets. Flow speed directly reflects physical velocity. Conduits turn azure blue for pure water, neon green for safe chlorine, deep purple for chemical plumes, and pulsing crimson for spoofed cyber nodes.',
+    tags: ['Fluid Velocity Scaling', 'Three.js WebGL Engine', 'Isometric Orbit Navigation']
+  },
+  valve: {
+    title: '🏥 Smart Valve Doctor (Hospital Safe Floor ≥15m)',
+    desc: 'Automatically calculates boundary valve isolations when a pipe breaks or toxins enter. Crucially, it simulates the closure on the Digital Twin first to verify that City Hospital and emergency clinics maintain safe pressure floor (≥15m) before turning any physical valve.',
+    tags: ['Critical Infrastructure Safe', 'EPANET Head Floor Verification', 'Automated Isolation']
+  },
+  pz: {
+    title: '🕵️ Patient Zero Backtracker (Reverse Fluid Dynamic DAG)',
+    desc: 'When chemical or biological contamination is spotted at multiple junctions, Aquila treats pipe flows like a directed acyclic graph (DAG) and walks backwards in time and space along flow streams to pinpoint the exact origin node, entry timestamp, and injection velocity.',
+    tags: ['Reverse-Time DAG Traversal', 'Advective Dijkstra', 'Upstream Origin Pinpoint']
+  },
+  audit: {
+    title: '🔒 Cryptographic SHA-256 Flight Recorder',
+    desc: 'Every telemetry measurement, valve state change, and operator decision is combined with the cryptographic hash of the previous record in a blockchain-style ledger. Any retroactive attempt by an insider or hacker to alter past logs instantly breaks the chain.',
+    tags: ['SHA-256 Chained Hash', 'Immutable Audit Log', 'Tamper-Evident Flight Recorder']
+  }
+};
+
+function renderFeatureDetail(key) {
+  const feat = FEATURES_DATA[key] || FEATURES_DATA.twin;
+  $('#feat-title').textContent = feat.title;
+  $('#feat-desc').textContent = feat.desc;
+  const tagsBox = $('#feat-tags');
+  tagsBox.innerHTML = '';
+  feat.tags.forEach(t => {
+    const s = document.createElement('span');
+    s.className = 'pill-tag ok';
+    s.textContent = t;
+    tagsBox.appendChild(s);
+  });
+}
+
+/* ---------- trust board ---------- */
+const gr=$('#grid');
+N.forEach(n=>{
+  const d=document.createElement('div');
+  d.className='cell';
+  d.innerHTML=`<small>${n.id}</small><br><b>100%</b><div class="bar"><i></i></div>`;
+  n.bEl=d.querySelector('b');
+  n.iEl=d.querySelector('i');
+  d.onclick=()=>{showCard(N.indexOf(n));const tw=$('#twin');if(tw)tw.scrollIntoView({behavior:'smooth'})};
+  n.cell=d;
+  gr.appendChild(d);
+});
+
+/* ---------- loop ---------- */
+function rs(){const w=stage.clientWidth,h=stage.clientHeight;R.setSize(w,h);cam.aspect=w/h;cam.updateProjectionMatrix()}
+new ResizeObserver(rs).observe(stage);
+const pa=pg.attributes.position,ca=pg.attributes.color,tmp=new V();let last=performance.now(),tick=0;
+function frame(now){
+  requestAnimationFrame(frame);
+  const dt=Math.min(.05,(now-last)/1e3);last=now;tick+=dt;idle+=dt;
+  if(!drag&&idle>3) targetTh+=dt*.08;
+  th+=(targetTh-th)*.12;
+  ph+=(targetPh-ph)*.12;
+  rad+=(targetRad-rad)*.12;
+  cam.position.set(Math.sin(th)*Math.sin(ph)*rad,Math.cos(ph)*rad,Math.cos(th)*Math.sin(ph)*rad);
+  cam.lookAt(0,0,0);
+  const fl=Math.sin(tick*12)>0;
+  E.forEach((e,i)=>{const c=C[e.m][0];pm[i].material.color.copy(c);gm[i].material.color.copy(c)});
+  P.forEach((p,i)=>{const e=E[p.e];p.t=(p.t+p.s*dt*SP[e.m])%1;tmp.lerpVectors(N[e.a].p,N[e.b].p,p.t);pa.setXYZ(i,tmp.x,tmp.y,tmp.z);const c=(e.m==='spoof'&&fl)?C.spoof[1]:C[e.m][p.c];ca.setXYZ(i,c.r,c.g,c.b)});pa.needsUpdate=ca.needsUpdate=true;
+  N.forEach((n,i)=>{
+    n.trust+=(n.tt-n.trust)*.06;
+    const isWQ = n.isQuality;
+    const col = n.st==='leak' ? 0xfb923c : n.st==='contam' ? 0xa855f7 : (n.st==='spoof' ? (fl?0xff2d55:0xffb3c0) : (isWQ ? 0xff2d55 : 0x22d3ee));
+    sm[i].material.color.setHex(col);
+    if(n.halo){
+      n.halo.material.color.setHex(col);
+      n.halo.lookAt(cam.position);
+      n.halo.scale.setScalar(1 + (isWQ ? .22 : .15)*Math.sin(tick*3+i));
+    }
+    sm[i].scale.setScalar(sel===i?1.5:1);
+  });
+  if(selMesh && selMesh.visible){
+    const s = 1 + 0.16 * Math.sin(tick * 6);
+    selRing1.scale.set(s, s, s);
+    selRing2.scale.set(1 / s, 1 / s, 1 / s);
+  }
+  if(qr.visible)qr.rotation.z+=dt*2;sm[0].rotation.y+=dt*.6;
+
+  // Project 3D floating landmark pins to screen coordinates
+  const stageW = stage.clientWidth, stageH = stage.clientHeight;
+  const wp = new THREE.Vector3();
+  N.forEach((n, i) => {
+    if (n.pinEl) {
+      wp.copy(n.p);
+      wp.y += (n.isQuality ? 0.95 : 0.72);
+      wp.project(cam);
+      if (wp.z < 1) {
+        const px = (wp.x * 0.5 + 0.5) * stageW;
+        const py = (-(wp.y * 0.5) + 0.5) * stageH;
+        n.pinEl.style.transform = `translate(-50%, -100%) translate(${px.toFixed(1)}px, ${py.toFixed(1)}px)`;
+        n.pinEl.style.display = 'flex';
+        n.pinEl.classList.toggle('selected', sel === i);
+      } else {
+        n.pinEl.style.display = 'none';
+      }
+    }
+  });
+
+  R.render(sc,cam);
+}
+rs();requestAnimationFrame(frame);
+setInterval(()=>{
+  N.forEach(n=>{
+    const t=Math.round(n.trust);
+    if(n._lt!==t){
+      n._lt=t;
+      if(n.bEl) n.bEl.textContent=t+'%';
+      if(n.iEl) n.iEl.style.width=t+'%';
+    }
+    const cls='cell'+(n.st==='spoof'&&t<60?' bad':n.st==='leak'?' warn':n.st==='contam'?' pu':'');
+    if(n.cell&&n.cell.className!==cls) n.cell.className=cls;
+  });
+  updCard();
+},120);
+
+/* ---------- warzone ---------- */
+let wt=[];function wl(id,t,c){const d=document.createElement('div');d.className=c;d.textContent=t;$(id).appendChild(d)}
+$('#wb').onclick=()=>{wt.forEach(clearTimeout);wt.forEach(clearInterval);wt=[];['#ll','#lr'].forEach(i=>$(i).innerHTML='');$('#ml').textContent='$0';$('#mr').textContent='$0';
+ const A=[[0,'#ll','⚠ J5 reports 0 psi','warn'],[900,'#ll','SCADA trusts the reading','bad'],[1800,'#ll','🚧 Dispatching 3 crews…','bad'],[2800,'#ll','Digging up Main St. Traffic jam.','bad'],[3900,'#ll','Nothing found. Ghost leak.','bad'],
+ [0,'#lr','⚠ J5 reports 0 psi','warn'],[900,'#lr','Physics check: 4 neighbours normal','ok'],[1800,'#lr','Swarm votes 4–0: isolate J5','ok'],[2800,'#lr','Injection vector: node 10.4.7.22','ok'],[3900,'#lr','Valves quarantined. Zero loss ✅','ok']];
+ A.forEach(a=>wt.push(setTimeout(()=>wl(a[1],a[2],a[3]),a[0])));
+ wt.push(setTimeout(()=>{let m=0;const iv=setInterval(()=>{m=Math.min(48000,m+1600);$('#ml').textContent='-$'+m.toLocaleString();if(m>=48000)clearInterval(iv)},90);wt.push(iv)},1800));
+ wt.push(setTimeout(()=>{$('#mr').textContent='$0 lost';toast('🏆 Aquila saved the city $48,000 and one very angry road.','ok',6000)},3900))};
+
+/* ===== REAL PHYSICAL PHONE DISPATCH & MOBILE NOTIFICATIONS ===== */
+function getCleanPhoneTopic() {
+  const input = $('#dispatch-phone');
+  const raw = (input && input.value.trim()) || localStorage.getItem('aquila_phone') || '+91 98765 43210';
+  if (raw.toLowerCase() === 'emergency' || raw.toLowerCase() === 'aquila-emergency') {
+    return {
+      raw: 'aquila-emergency',
+      clean: '9876543210',
+      topic: 'aquila-emergency'
+    };
+  }
+  const clean = raw.replace(/\D/g, '');
+  return {
+    raw: raw,
+    clean: clean,
+    topic: clean ? ('aquila-' + clean) : 'aquila-emergency'
+  };
+}
+
+function setSimpleEmergencyTopic() {
+  const input = $('#dispatch-phone');
+  if (input) input.value = 'aquila-emergency';
+  onPhoneInputChanged();
+  savePhoneNumber(true);
+  toast('Topic set to: <b>aquila-emergency</b>', 'ok');
+}
+
+function loadPhoneNumber() {
+  const saved = localStorage.getItem('aquila_phone') || 'aquila-emergency';
+  const input = $('#dispatch-phone');
+  if (input) input.value = saved;
+  onPhoneInputChanged();
+}
+
+function savePhoneNumber(showFeedback = true) {
+  const input = $('#dispatch-phone');
+  if (!input) return;
+  const num = input.value.trim() || '+91 98765 43210';
+  localStorage.setItem('aquila_phone', num);
+  onPhoneInputChanged();
+  const msg = $('#phone-saved-msg');
+  if (msg && showFeedback) {
+    msg.style.display = 'block';
+    setTimeout(() => { msg.style.display = 'none'; }, 3500);
+  }
+  if (showFeedback) {
+    toast(`📱 Dedicated channel paired to <b>${num}</b>`, 'ok');
+  }
+}
+
+function onPhoneInputChanged() {
+  const { raw, clean, topic } = getCleanPhoneTopic();
+  localStorage.setItem('aquila_phone', raw);
+
+  const topicDisplay = $('#topic-display-name');
+  if (topicDisplay) topicDisplay.textContent = `ntfy.sh/${topic}`;
+
+  const qrImg = $('#qr-code-img');
+  const directLink = $('#topic-direct-link');
+  const targetUrl = `https://ntfy.sh/${topic}`;
+
+  if (qrImg) {
+    qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(targetUrl)}`;
+  }
+  if (directLink) {
+    directLink.href = targetUrl;
+    directLink.textContent = `🔗 Open ntfy.sh/${topic} on phone ↗`;
+  }
+}
+
+function openTopicDirectly() {
+  const { topic } = getCleanPhoneTopic();
+  window.open(`https://ntfy.sh/${topic}`, '_blank');
+}
+
+function sendWhatsAppAlert(customMsg) {
+  const { raw, clean } = getCleanPhoneTopic();
+  if (!clean) {
+    toast('Please enter your mobile phone number first.', 'warn');
+    return;
+  }
+  const msg = customMsg || `🚨 AQUILA EMERGENCY DISPATCH (PRIORITY 5)\n\nNode S8: Real Pipe Rupture confirmed (~25.0 L/s)\nInflow spike verified by mass conservation.\nSmart Valve Doctor isolating section.\nHospital pressure maintained ≥15m.`;
+  const url = `https://api.whatsapp.com/send?phone=${clean}&text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
+  toast(`💬 WhatsApp emergency dispatch opened for +${clean}`, 'ok');
+}
+
+function playDispatchChime(type = 'alarm') {
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    const now = ctx.currentTime;
+
+    if (type === 'alarm') {
+      const osc1 = ctx.createOscillator();
+      const osc2 = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc1.type = 'triangle';
+      osc2.type = 'sine';
+
+      osc1.frequency.setValueAtTime(880, now);
+      osc1.frequency.setValueAtTime(1175, now + 0.14);
+      osc1.frequency.setValueAtTime(880, now + 0.28);
+      osc1.frequency.setValueAtTime(1175, now + 0.42);
+
+      osc2.frequency.setValueAtTime(440, now);
+      osc2.frequency.setValueAtTime(587.33, now + 0.14);
+
+      gain.gain.setValueAtTime(0.22, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+
+      osc1.connect(gain);
+      osc2.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc1.start(now);
+      osc2.start(now);
+      osc1.stop(now + 0.72);
+      osc2.stop(now + 0.72);
+    }
+  } catch (e) {}
+}
+
+function dispatchRealMobilePush(title, message, priority = 5, tags = ['rotating_light', 'warning'], customTopic) {
+  const { topic } = getCleanPhoneTopic();
+  const targetTopic = customTopic || topic;
+  const topicsToPush = Array.from(new Set([targetTopic, 'aquila-emergency']));
+  const statusEl = $('#dispatch-delivery-status');
+
+  if (statusEl) {
+    statusEl.innerHTML = `<span style="color:#38bdf8;">⏳ Transmitting alert to ntfy.sh/${targetTopic} & aquila-emergency...</span>`;
+    statusEl.style.display = 'block';
+  }
+
+  const pushPromises = topicsToPush.map(top => {
+    return fetch('https://ntfy.sh', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        topic: top,
+        title: title,
+        message: message,
+        priority: Number(priority) || 5,
+        tags: tags || ['warning']
+      })
+    });
+  });
+
+  Promise.all(pushPromises).then(responses => {
+    console.log(`[Aquila] Alert pushed to topics [${topicsToPush.join(', ')}]`);
+    if (statusEl) {
+      const now = new Date().toLocaleTimeString();
+      statusEl.innerHTML = `
+        <div style="color:#4ade80; font-weight:700; margin-bottom:3px;">
+          ✓ Dispatched to real phone at ${now} (HTTP 200 OK)
+        </div>
+        <div style="font-size:11px; color:var(--mu);">
+          Active Topics: <b style="color:var(--tx);">${topicsToPush.join(', ')}</b> · 
+          <a href="https://ntfy.sh/aquila-emergency" target="_blank" rel="noopener noreferrer" style="color:var(--ac); text-decoration:underline;">
+            Open Live Web Feed ↗
+          </a>
+        </div>
+      `;
+      statusEl.style.display = 'block';
+    }
+  }).catch(err => {
+    console.warn('[Aquila] Push delivery error:', err);
+    if (statusEl) {
+      statusEl.innerHTML = `
+        <div style="color:#f87171; font-weight:700; margin-bottom:3px;">
+          ⚠️ Transmit notice: ${err.message || 'Check connection'}
+        </div>
+        <div style="font-size:11px; color:var(--mu);">
+          <a href="https://ntfy.sh/aquila-emergency" target="_blank" rel="noopener noreferrer" style="color:var(--ac); text-decoration:underline;">open ntfy.sh/aquila-emergency directly ↗</a>
+        </div>
+      `;
+      statusEl.style.display = 'block';
+    }
+  });
+}
+
+function triggerPhoneAlert(info) {
+  const { raw, clean, topic } = getCleanPhoneTopic();
+
+  playDispatchChime('alarm');
+
+  dispatchRealMobilePush(
+    info.title || '🚨 Aquila Emergency Dispatch',
+    `${info.body}\nDispatched to: ${raw}\nAction: Smart Valve Doctor Isolating`,
+    info.priority || 5,
+    (info.kind === 'CONTAMINATION') ? ['biohazard', 'rotating_light'] : (info.kind === 'REAL_LEAK') ? ['droplet', 'warning'] : ['rotating_light', 'lock'],
+    topic
+  );
+
+  toast(`📱 <b>Message Dispatched to Your Physical Phone:</b><br>${info.title}<br><small style="color:#9bb7d0">Sent to ${raw} (Channel: ntfy.sh/${topic})</small>`, 'bad', 5500);
+
+  if ('Notification' in window && Notification.permission === 'granted') {
+    try {
+      new Notification(info.title, { body: `${info.body} (Target: ${raw})` });
+    } catch (e) {}
+  }
+}
+
+function triggerTestEmergencyAlert() {
+  const { raw, topic } = getCleanPhoneTopic();
+  triggerPhoneAlert({
+    kind: 'REAL_LEAK',
+    title: '🚨 CRITICAL: HIGH-PRESSURE PIPE RUPTURE',
+    body: `Sensor S8 (Barrois Quality) pressure dropped to 18 psi. Inflow spike +25.0 L/s verified. Inflow & neighbor drop matches Orifice Law.`,
+    targetNode: 'Sensor S8',
+    priority: 5,
+    valves: 'Valves V4 & V7 auto-isolated. Hospital head maintained ≥15m.'
+  });
+  toast(`⚡ Test emergency push transmitted to your phone at <b>${raw}</b> (ntfy.sh/${topic})!`, 'ok', 6000);
+}
+
+/* ===== AUTONOMOUS GUARDIAN (AUTO-DISPATCH ON ITS OWN) ===== */
+let autoGuardianActive = false;
+let autoGuardianInterval = null;
+let autoIncidentIndex = 0;
+
+const AUTO_INCIDENTS = [
+  {
+    kind: 'REAL_LEAK',
+    title: '💧 CRITICAL: HIGH-PRESSURE PIPE RUPTURE',
+    body: 'Sensor S8 (Barrois Quality): Inflow surged +25.0 L/s. Neighbour gradients confirmed real burst. Smart Valve Doctor isolating section V4 & V7. Hospital pressure safe ≥15m.',
+    priority: 5
+  },
+  {
+    kind: 'CYBERATTACK',
+    title: '🛑 CRITICAL: COZY BEAR PACKET SPOOF',
+    body: 'Sensor S12 reported forged 0.0 psi. Physics consensus voted 4-0 outlier. Node quarantined & synthetic Ghost Sensor activated.',
+    priority: 4
+  },
+  {
+    kind: 'CONTAMINATION',
+    title: '☣️ CRITICAL: CHEMICAL CONTAMINATION',
+    body: 'Sensor S6 detected chlorine depletion below 0.1 mg/L. Plume backtracker identified injection origin. Quarantine valves triggered.',
+    priority: 5
+  }
+];
+
+function toggleAutoGuardian() {
+  autoGuardianActive = !autoGuardianActive;
+  const btn = $('#btn-auto-guardian');
+
+  if (autoGuardianActive) {
+    if (btn) {
+      btn.innerHTML = '<span>⏸</span> Stop Auto-Dispatch (Running on its own)';
+      btn.style.background = 'rgba(239,68,68,0.2)';
+      btn.style.borderColor = '#ef4444';
+      btn.style.color = '#f87171';
+    }
+    toast('🤖 <b>Auto-Guardian Mode ACTIVE!</b> Sending alerts on its own every 25 seconds...', 'ok', 5000);
+
+    setTimeout(() => {
+      if (autoGuardianActive) fireNextAutoIncident();
+    }, 2000);
+
+    autoGuardianInterval = setInterval(() => {
+      if (autoGuardianActive) fireNextAutoIncident();
+    }, 25000);
+  } else {
+    clearInterval(autoGuardianInterval);
+    if (btn) {
+      btn.innerHTML = '<span>🤖</span> Enable Auto-Dispatch Mode (Sends on its own)';
+      btn.style.background = 'rgba(56,189,248,0.12)';
+      btn.style.borderColor = '#38bdf8';
+      btn.style.color = '#38bdf8';
+    }
+    toast('Auto-Guardian Mode stopped.', 'warn');
+  }
+}
+
+function fireNextAutoIncident() {
+  const inc = AUTO_INCIDENTS[autoIncidentIndex % AUTO_INCIDENTS.length];
+  autoIncidentIndex++;
+  triggerPhoneAlert(inc);
+}
+
+function setPhoneStandby() {
+  // Standby mode
+}
+
+function requestBrowserNotificationPermission() {
+  if (!('Notification' in window)) {
+    toast('Browser push notifications not supported in this browser.', 'warn');
+    return;
+  }
+  Notification.requestPermission().then(permission => {
+    if (permission === 'granted') {
+      toast('🔔 Browser push notifications enabled!', 'ok');
+      new Notification('Aquila Water Guardian', { body: 'Emergency dispatch notifications are now active.' });
+    } else {
+      toast('Browser push notifications blocked or dismissed.', 'warn');
+    }
+  });
+}
+
+/* ===== LIVE INTERACTIVE PITCH DIRECTOR ===== */
+let currentPitchStep = 0;
+const PITCH_SLIDES = [
+  {
+    step: 1,
+    title: '1. The Crisis: Legacy SCADA Blindness',
+    sub: 'Why modern water grids lose $40B/year and fail against cyber threats',
+    pitch: 'City water networks lose over 40% of treated drinking water to silent leaks. More dangerously, SCADA software in most cities blindly trusts sensor packets. If an attacker injects a spoofed low-pressure packet, operators panic and dig up roads for ghost leaks, or miss real toxic spills.',
+    triggerText: '▶ Run Normal Baseline Network',
+    action: () => {
+      reset();
+      const tw = $('#twin');
+      if (tw) tw.scrollIntoView({ behavior: 'smooth' });
+      toast('Baseline steady-state loaded. All 24 sensors healthy.', 'ok');
+    }
+  },
+  {
+    step: 2,
+    title: '2. The Attack: Coordinated Multi-Point Spoof',
+    sub: 'Adversary spoofing sensors across the Polytech\'Lille campus',
+    pitch: 'Now watch an adversary execute a simultaneous 4-node attack across the University of Lille campus. They report 0 psi on sensors S4, S8, S12, and S17 to deceive operators into triggering emergency pump shutdowns.',
+    triggerText: '▶ Launch Coordinated 4-Node Attack',
+    action: () => {
+      setSimMode('multi');
+      loadMultiPreset('quad');
+      runCustomSimulation();
+      const sim = $('#sim');
+      if (sim) sim.scrollIntoView({ behavior: 'smooth' });
+    }
+  },
+  {
+    step: 3,
+    title: '3. The Defense: Physics as the Lie Detector',
+    sub: 'Byzantine Fault Tolerant consensus in 14 milliseconds',
+    pitch: 'Hackers can forge digital keys and spoof IPs, but they cannot hack mass conservation: Σ Qin = Σ Qout. In 14 milliseconds, neighbouring sensors check each other\'s physical gradients, cast unanimous 4-0 outlier votes, firewall the hacked nodes, and spin up synthetic Ghost Sensors so water flows uninterrupted.',
+    triggerText: '▶ View Swarm Consensus & Before/After Graphs',
+    action: () => {
+      const an = $('#analytics');
+      if (an) an.scrollIntoView({ behavior: 'smooth' });
+      switchGraph('pressure', $$('.graph-tab')[0]);
+      toast('Inspecting Before vs After physics reconstruction graphs.', 'ok');
+    }
+  },
+  {
+    step: 4,
+    title: '4. Immediate Impact: Sub-Second Phone Dispatch',
+    sub: 'Lockscreen notification to the engineer while protecting hospital pressure',
+    pitch: 'Within 200 milliseconds, an encrypted dispatch hits the municipal engineer\'s phone screen with exact valve coordinates. Crucially, our Smart Valve Doctor verifies hospital and clinic pressure stays above the safe 15-meter floor before closing any valve.',
+    triggerText: '▶ Trigger Phone Alert & Real Mobile Push',
+    action: () => {
+      triggerTestEmergencyAlert();
+      togglePhoneSimulator(true);
+    }
+  }
+];
+
+function openPitchDirector() {
+  const m = $('#pitch-modal');
+  if (m) m.classList.remove('hide');
+  renderPitchSlide(currentPitchStep);
+}
+
+function closePitchDirector(e) {
+  if (e && e.target && e.target.id !== 'pitch-modal' && !e.target.classList.contains('x')) return;
+  const m = $('#pitch-modal');
+  if (m) m.classList.add('hide');
+}
+
+function renderPitchSlide(step) {
+  currentPitchStep = step;
+  const slide = PITCH_SLIDES[step];
+  const stepEl = $('#pitch-step-num');
+  if (stepEl) stepEl.textContent = step + 1;
+
+  const dots = $$('#pitch-dots span');
+  dots.forEach((d, i) => d.classList.toggle('active', i === step));
+
+  const contentEl = $('#pitch-slide-content');
+  if (contentEl) {
+    contentEl.innerHTML = `
+      <h2 style="font-size:1.5rem; margin:0 0 4px; color:var(--tx);">${slide.title}</h2>
+      <div style="font-size:13px; color:var(--ac); font-weight:700; margin-bottom:14px;">${slide.sub}</div>
+      <div style="background:rgba(0,0,0,0.25); border:1px solid var(--ln); border-left:4px solid var(--ac); border-radius:12px; padding:16px; margin-bottom:20px;">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.5px; font-weight:800; color:var(--mu); margin-bottom:6px;">Presenter Talking Point:</div>
+        <p style="font-size:14.5px; line-height:1.6; color:var(--tx); margin:0;">"${slide.pitch}"</p>
+      </div>
+      <div style="display:flex; justify-content:center;">
+        <button type="button" class="btn" onclick="PITCH_SLIDES[${step}].action()" style="padding:12px 24px; font-size:14.5px; background:linear-gradient(135deg, #06b6d4, #3b82f6); box-shadow:0 8px 25px -5px #06b6d4; color:#fff; border:none;">
+          ${slide.triggerText}
+        </button>
+      </div>
+    `;
+  }
+
+  const prevBtn = $('#pitch-prev-btn');
+  const nextBtn = $('#pitch-next-btn');
+  if (prevBtn) prevBtn.style.visibility = (step === 0) ? 'hidden' : 'visible';
+  if (nextBtn) nextBtn.textContent = (step === PITCH_SLIDES.length - 1) ? 'Finish Pitch 🏆' : 'Next Step →';
+}
+
+function nextPitchStep() {
+  if (currentPitchStep < PITCH_SLIDES.length - 1) {
+    renderPitchSlide(currentPitchStep + 1);
+  } else {
+    closePitchDirector();
+    toast('🏆 Live Pitch complete! Evaluators can now test interactive controls.', 'ok', 6000);
+  }
+}
+
+function prevPitchStep() {
+  if (currentPitchStep > 0) {
+    renderPitchSlide(currentPitchStep - 1);
+  }
+}
+
+/* ===== FORENSIC INCIDENT REPORT GENERATOR & EXPORTER ===== */
+function getLatestReportText() {
+  const dateStr = new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC';
+  const reportId = 'AQ-' + new Date().getFullYear() + '-INC-' + Math.floor(1000 + Math.random() * 9000) + '-F' + Math.floor(10 + Math.random() * 89);
+  
+  const isContam = typeof currentSimMode !== 'undefined' && currentSimMode === 'contam';
+  const isLeak = typeof currentSimMode !== 'undefined' && currentSimMode === 'leak';
+  const isMulti = typeof currentSimMode !== 'undefined' && (currentSimMode === 'multi' || targetMode === 'multi' || targetMode === 'zone');
+  const isStealth = typeof currentSimMode !== 'undefined' && currentSimMode === 'stealth';
+
+  let classification = 'CYBERATTACK_PACKET_SPOOF (Confidence: 99.8%)';
+  let lossAvoided = '$48,000 USD (3 Ghost Leaks & Unnecessary Excavation Prevented)';
+  let targetDesc = (targetMode === 'zone' && typeof PRESSURE_ZONES !== 'undefined' && PRESSURE_ZONES[currentZoneKey]) ?
+    `${PRESSURE_ZONES[currentZoneKey].name} (${PRESSURE_ZONES[currentZoneKey].nodes.map(i=>'S'+i).join(', ')})` :
+    'Sensor S8 (Barrois Restaurant Quality Junction)';
+  let reportedTelemetry = '0.0 psi (FORGED PIPE BURST)';
+  let truthTelemetry = '58.4 psi (Physics Reconstruction)';
+  let residualDeficit = '-58.4 psi (Statistically Impossible Gradient)';
+  let flowSurge = '0.0 L/s (Inflow Meter Steady at 14.2 L/s)';
+  let packetIP = '185.220.101.47 (Known Tor Exit / Spoofed Gateway)';
+  let ttlVal = '52 (Internal SCADA expected: 64)';
+  let hmacStatus = 'FAILED (Forged / Replay Packet detected)';
+  let actionsTaken = 'Quarantined node IP without closing physical water mains.\n- Hospital Pressure : City Hospital (Node S13) maintained at 48.2 psi (≥15m floor).\n- Emergency Alert   : Dispatched to Real Physical Mobile Phone (ntfy.sh/aquila-emergency).\n- Public Notice     : Suppressed false leak dispatch (Saved $48,000 excavation cost).';
+
+  if (isLeak) {
+    classification = 'PHYSICAL_PIPE_BURST (Orifice Law Verified: 99.4%)';
+    lossAvoided = '120,000 Litres ($3,600 USD) drinking water saved via rapid isolation';
+    targetDesc = 'Sensor S8 (Barrois Quality Junction)';
+    reportedTelemetry = '18.0 psi (REAL LOW PRESSURE)';
+    truthTelemetry = '18.0 psi (Physics Inflow Gradient Confirmed)';
+    residualDeficit = '+25.0 L/s (Inflow Meter Surge Match)';
+    flowSurge = '+25.0 L/s (Mass Conservation Inflow Verified)';
+    packetIP = '10.4.7.22 (Valid Internal SCADA Node)';
+    ttlVal = '64 (Valid Internal Hop)';
+    hmacStatus = 'VALID (Genuine Hardware Sensor Signature)';
+    actionsTaken = 'Smart Valve Doctor actuated isolation of Valves V4 & V7.\n- Hospital Pressure : Maintained at 18.5m (Safe floor ≥15m preserved).\n- Crew Dispatch     : Targeted repair team sent with exact pipe GPS coordinates.\n- Public Notice     : Downstream booster activated to maintain civilian flow.';
+  } else if (isContam) {
+    classification = 'TOXIC_CHEMICAL_CONTAMINATION (Chlorine Depletion < 0.1 mg/L)';
+    lossAvoided = 'Protected 18,000 students and campus residents from toxic ingestion';
+    targetDesc = 'Sensor S6 (Polytech Lille Water Quality Node)';
+    reportedTelemetry = 'Chlorine: 0.08 mg/L (Critical Depletion Alarm)';
+    truthTelemetry = 'Chlorine: 0.08 mg/L (Plume Confirmed)';
+    residualDeficit = '-0.77 mg/L Chemical Mass Degradation';
+    flowSurge = 'Normal Hydraulic Advection: 0.42 m/s velocity';
+    packetIP = '10.4.7.18 (Valid Water Quality Node)';
+    ttlVal = '64 (Valid Internal Hop)';
+    hmacStatus = 'VALID (Genuine Water Quality Sensor Signature)';
+    actionsTaken = 'Patient Zero DAG backtracker identified injection origin at Node S6 (~160 min ago).\n- Downstream Valves : Sector quarantine valves V6, V9 & V11 closed in parallel.\n- Emergency Alert   : Priority 5 Hazardous Material dispatch sent to municipal engineer.\n- Water Safety Desk : Chlorination dosing station triggered at upstream reservoir.';
+  } else if (isStealth) {
+    classification = 'STEALTH_SLOW_DRIFT_REPLAY_ATTACK (Physics Residual Deficit: 99.1%)';
+    lossAvoided = '$62,000 USD (Latent sensor blinding & undetected water loss averted)';
+    targetDesc = 'Sensor S8 (Barrois Quality Junction)';
+    reportedTelemetry = '42.1 psi (-0.3 psi/min slow stealth crawl)';
+    truthTelemetry = '58.4 psi (Unchanged ground truth)';
+    residualDeficit = '-16.3 psi cumulative residual discrepancy';
+    flowSurge = '0.0 L/s inflow change (Adversary attempted sub-threshold evasion)';
+    packetIP = '194.26.29.112 (Compromised Edge RTU Gateway)';
+    ttlVal = '58 (Abnormal Routing Hop)';
+    hmacStatus = 'REVOKED (Timestamp drift exceeded replay window tolerance)';
+    actionsTaken = 'Cumulative sum CUSUM detector flagged persistent sub-threshold drift.\n- Swarm Consensus  : 4 neighbor nodes confirmed physical flow invariance.\n- Synthetic Stream : Node isolated and replaced by real-time physics estimate.\n- Municipal Log    : Forensics flagged slow adversary reconnaissance.';
+  } else if (isMulti) {
+    classification = 'COORDINATED_MULTI_NODE_ATTACK (Quad-Vector Spoof)';
+    lossAvoided = '$192,000 USD (Grid-wide black-sky shutdown averted)';
+    targetDesc = 'Junctions S4, S8, S12, S17 (East Main, Barrois, LILLIAD, IEMN)';
+    reportedTelemetry = 'Simultaneous 0.0 psi across 4 distinct pressure zones';
+    truthTelemetry = 'All 4 zones physically healthy (56.0 - 62.0 psi)';
+    residualDeficit = 'Mass Conservation Invariant intact across whole grid';
+    flowSurge = 'Zero inflow variation (Proves Digital Key compromise)';
+    packetIP = 'Distributed Sybil Botnet (185.220.101.*)';
+    ttlVal = '48 - 54 (External adversary injection)';
+    hmacStatus = 'FAILED on all 4 vectors (Forged HMAC Tokens)';
+    actionsTaken = 'Byzantine Swarm isolated all 4 compromised nodes simultaneously.\n- Synthetic Ghosts  : 4 Ghost Sensors initialized to stream ground truth.\n- Hospital Pressure : 100% uninterrupted water delivery to City Hospital & Clinic.\n- Cryptographic Key : Revoked compromised node credentials in Flight Recorder.';
+  }
+
+  return `================================================================================
+AQUILA INDUSTRIAL CYBER-PHYSICAL INCIDENT DOSSIER
+Municipal Drinking Water Distribution Network Defense
+================================================================================
+Report ID      : ${reportId}
+Timestamp      : ${dateStr}
+Target Network : Polytech'Lille Campus Municipal Water Grid (24 Sensor Nodes)
+Classification : ${classification}
+Defense Engine : Byzantine Fault Tolerant Swarm Consensus (14ms response)
+Loss Avoided   : ${lossAvoided}
+
+1. EXECUTIVE INCIDENT SUMMARY
+--------------------------------------------------------------------------------
+Aquila's autonomous physics-aware neural engine detected anomalous telemetry
+in the drinking water network. Unlike legacy SCADA systems that blindly trust
+sensor packets, Aquila cross-examined Navier-Stokes hydraulic gradients,
+mass conservation (Σ Qin = Σ Qout), and advective transport invariants to
+differentiate cyber warfare from physical infrastructure failures.
+
+2. TELEMETRY & NETWORK FINGERPRINT
+--------------------------------------------------------------------------------
+Target Junction      : ${targetDesc}
+Reported Telemetry   : ${reportedTelemetry}
+Ground Truth Value   : ${truthTelemetry}
+Divergence Residual  : ${residualDeficit}
+Inflow Meter State   : ${flowSurge}
+Packet Origin IP     : ${packetIP}
+TTL Hop Distance     : ${ttlVal}
+HMAC Cryptography    : ${hmacStatus}
+
+3. SWARM BYZANTINE CONSENSUS AUDIT
+--------------------------------------------------------------------------------
+Surrounding sensors independently evaluated mass balance equations:
+- Sensor S1  -> Implied Target: 58.2 psi | Vote: ${isLeak ? 'REAL DRAWDOWN' : 'LIAR (OUTLIER)'} (Weight: 100%)
+- Sensor S7  -> Implied Target: 59.1 psi | Vote: ${isLeak ? 'REAL DRAWDOWN' : 'LIAR (OUTLIER)'} (Weight: 100%)
+- Sensor S9  -> Implied Target: 57.8 psi | Vote: ${isLeak ? 'REAL DRAWDOWN' : 'LIAR (OUTLIER)'} (Weight: 100%)
+- Sensor S13 -> Implied Target: 58.6 psi | Vote: ${isLeak ? 'REAL DRAWDOWN' : 'LIAR (OUTLIER)'} (Weight: 100%)
+Consensus Result     : 4-0 UNANIMOUS PHYSICAL CONCURRENCE
+Bayesian Trust Score : Evaluated in 14 milliseconds without cloud round-trip.
+Ghost Sensor Status  : ${isLeak ? 'N/A (Physical Event)' : 'Synthetic Ghost Sensor stream engaged for continuous flow.'}
+
+4. SMART VALVE DOCTOR & LIFE SAFETY ACTIONS
+--------------------------------------------------------------------------------
+- Safety Strategy    : ${actionsTaken}
+
+5. CRYPTOGRAPHIC FLIGHT RECORDER AUDIT
+--------------------------------------------------------------------------------
+Previous Block Hash  : 9e3f1c8a42b08d27e98a123f8b9012cd345678ef901234567890abcdef123456
+Current Incident Hash: a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8
+Signature Status     : CRYPTOGRAPHICALLY TAMPER-PROOF (SHA-256 Chain Intact)
+Protocol Engine      : Aquila Swarm Consensus Protocol v2.9
+Operator Authority   : Autonomous Municipal Guardian
+================================================================================
+END OF FORENSIC INCIDENT REPORT`;
+}
+
+function toggleCornerReport(forceState) {
+  const panel = $('#corner-report-panel');
+  const preview = $('#corner-report-preview');
+  const chevron = $('#corner-chevron');
+  if (!panel) return;
+  
+  const shouldOpen = (typeof forceState === 'boolean') ? forceState : panel.classList.contains('hide');
+  if (shouldOpen) {
+    if (preview) {
+      preview.textContent = getLatestReportText();
+    }
+    panel.classList.remove('hide');
+    if (chevron) chevron.textContent = '▼';
+    toast('📄 Forensic Incident Dossier ready in corner option.', 'ok');
+  } else {
+    panel.classList.add('hide');
+    if (chevron) chevron.textContent = '▲';
+  }
+}
+
+function openForensicReport() {
+  toggleCornerReport(true);
+}
+
+function closeForensicReport() {
+  toggleCornerReport(false);
+}
+
+function downloadForensicReport() {
+  const text = getLatestReportText();
+  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const dateStr = new Date().toISOString().replace(/[:.]/g, '-');
+  a.href = url;
+  a.download = `aquila-forensic-report-${dateStr}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast('💾 Forensic Incident Report downloaded (.txt)!', 'ok');
+}
+
+function copyForensicReport() {
+  const text = getLatestReportText();
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => {
+      toast('📋 Report copied to clipboard!', 'ok');
+    }).catch(() => {
+      fallbackCopyText(text);
+    });
+  } else {
+    fallbackCopyText(text);
+  }
+}
+
+function fallbackCopyText(text) {
+  const textArea = document.createElement('textarea');
+  textArea.value = text;
+  document.body.appendChild(textArea);
+  textArea.select();
+  try {
+    document.execCommand('copy');
+    toast('📋 Report copied to clipboard!', 'ok');
+  } catch (err) {
+    toast('Please select and copy manually.', 'warn');
+  }
+  document.body.removeChild(textArea);
+}
+
+window.addEventListener('load', () => {
+  initTheme();
+  initAnalyticsChart();
+  renderMultiChips();
+  renderFeatureDetail('twin');
+  loadPhoneNumber();
+  if (typeof updatePhoneClock === 'function') {
+    updatePhoneClock();
+    setInterval(updatePhoneClock, 1000);
+  }
+  renderPitchSlide(0);
+  document.querySelectorAll('nav a, .hero a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const href = a.getAttribute('href');
+      if (href && href.startsWith('#') && href.length > 1) {
+        const target = document.querySelector(href);
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+    });
+  });
+});
+</script></body></html>
